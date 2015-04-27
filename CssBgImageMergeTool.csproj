@@ -9,7 +9,7 @@
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>CssBgImageMergeTool</RootNamespace>
-    <AssemblyName>CssBgImageMergeTool</AssemblyName>
+    <AssemblyName>CssSprite</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
