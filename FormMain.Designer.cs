@@ -47,12 +47,12 @@
             this.chkBoxPhone = new System.Windows.Forms.CheckBox();
             this.panelTop = new System.Windows.Forms.Panel();
             this.panelBottom = new System.Windows.Forms.Panel();
-            this.buttonMakeBigImageCss = new System.Windows.Forms.Button();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.buttonBrowse = new System.Windows.Forms.Button();
             this.buttonVRange = new System.Windows.Forms.Button();
             this.buttonHRange = new System.Windows.Forms.Button();
+            this.buttonMakeBigImageCss = new System.Windows.Forms.Button();
             this.panelImages = new System.Windows.Forms.Panel();
-            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panelTop.SuspendLayout();
             this.panelBottom.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -242,20 +242,22 @@
             this.panelBottom.Size = new System.Drawing.Size(839, 301);
             this.panelBottom.TabIndex = 0;
             // 
-            // buttonMakeBigImageCss
+            // tableLayoutPanel1
             // 
-            this.buttonMakeBigImageCss.BackColor = System.Drawing.Color.RoyalBlue;
-            this.buttonMakeBigImageCss.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonMakeBigImageCss.ForeColor = System.Drawing.Color.White;
-            this.buttonMakeBigImageCss.Image = global::CssBgImageMergeTool.Properties.Resources.download;
-            this.buttonMakeBigImageCss.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonMakeBigImageCss.Location = new System.Drawing.Point(595, 10);
-            this.buttonMakeBigImageCss.Name = "buttonMakeBigImageCss";
-            this.buttonMakeBigImageCss.Size = new System.Drawing.Size(171, 40);
-            this.buttonMakeBigImageCss.TabIndex = 9;
-            this.buttonMakeBigImageCss.Text = "生成雪碧图";
-            this.buttonMakeBigImageCss.UseVisualStyleBackColor = false;
-            this.buttonMakeBigImageCss.Click += new System.EventHandler(this.ButtonMakeBigImageCss_Click);
+            this.tableLayoutPanel1.ColumnCount = 1;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.Controls.Add(this.panelTop, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.panelBottom, 0, 2);
+            this.tableLayoutPanel1.Controls.Add(this.panelImages, 0, 1);
+            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.RowCount = 3;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 60F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 307F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(845, 545);
+            this.tableLayoutPanel1.TabIndex = 0;
             // 
             // buttonBrowse
             // 
@@ -305,6 +307,21 @@
             this.buttonHRange.UseVisualStyleBackColor = false;
             this.buttonHRange.Click += new System.EventHandler(this.buttonHRange_Click);
             // 
+            // buttonMakeBigImageCss
+            // 
+            this.buttonMakeBigImageCss.BackColor = System.Drawing.Color.RoyalBlue;
+            this.buttonMakeBigImageCss.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonMakeBigImageCss.ForeColor = System.Drawing.Color.White;
+            this.buttonMakeBigImageCss.Image = global::CssBgImageMergeTool.Properties.Resources.download;
+            this.buttonMakeBigImageCss.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.buttonMakeBigImageCss.Location = new System.Drawing.Point(595, 10);
+            this.buttonMakeBigImageCss.Name = "buttonMakeBigImageCss";
+            this.buttonMakeBigImageCss.Size = new System.Drawing.Size(171, 40);
+            this.buttonMakeBigImageCss.TabIndex = 9;
+            this.buttonMakeBigImageCss.Text = "生成雪碧图";
+            this.buttonMakeBigImageCss.UseVisualStyleBackColor = false;
+            this.buttonMakeBigImageCss.Click += new System.EventHandler(this.ButtonMakeBigImageCss_Click);
+            // 
             // panelImages
             // 
             this.panelImages.AutoScroll = true;
@@ -316,23 +333,6 @@
             this.panelImages.Name = "panelImages";
             this.panelImages.Size = new System.Drawing.Size(839, 172);
             this.panelImages.TabIndex = 0;
-            // 
-            // tableLayoutPanel1
-            // 
-            this.tableLayoutPanel1.ColumnCount = 1;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Controls.Add(this.panelTop, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.panelBottom, 0, 2);
-            this.tableLayoutPanel1.Controls.Add(this.panelImages, 0, 1);
-            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
-            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 3;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 60F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 307F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(845, 545);
-            this.tableLayoutPanel1.TabIndex = 0;
             // 
             // FormMain
             // 
