@@ -37,7 +37,20 @@ namespace CssBgImageMergeTool
         public FormMain()
         {
             InitializeComponent();
+            this.Resize += FormMain_Resize;
+            resize();
         }
+
+        void FormMain_Resize(object sender, EventArgs e)
+        {
+            resize();
+        }
+
+        private void resize()
+        {
+            txtCss.Width = txtSass.Width = this.Width-20;
+        }
+
 
         private void buttonBrowse_Click(object sender, EventArgs e)
         {
@@ -132,9 +145,9 @@ namespace CssBgImageMergeTool
             return true;
         }
 
-        private PictureBox _selectedPicture;
+        private PictureBox _selectedPicture=null;
         private Size _bigSize;
-        private bool _isVerticle;
+        private bool _isVerticle=false;
 
 
         string GetImgExt()
@@ -147,6 +160,13 @@ namespace CssBgImageMergeTool
             return "png";
         }
 
+        /// <summary>
+        /// 得到sass代码
+        /// </summary>
+        /// <param name="img">图片</param>
+        /// <param name="left">左边距离</param>
+        /// <param name="top">右边距离</param>
+        /// <returns></returns>
         string GetSassCss(Image img, int left, int top) 
         {
             ImageInfo imgInfo = null;
@@ -175,6 +195,14 @@ namespace CssBgImageMergeTool
             return "@mixin " + GetCssName(imgInfo.Name) + "{height:" + imgHeight + "px;width:" + imgWidth + "px;" + "background-position: " + _left + " " + _top + ";}" + Environment.NewLine;
         }
 
+
+        /// <summary>
+        /// 获取css代码
+        /// </summary>
+        /// <param name="img">图片</param>
+        /// <param name="left">左边距离</param>
+        /// <param name="top">右边距离</param>
+        /// <returns></returns>
         string GetCss(Image img, int left, int top)
         {
             ImageInfo imgInfo = null;
@@ -241,6 +269,7 @@ namespace CssBgImageMergeTool
 
         }
 
+
         public void SetCssText() {
             var isPhone = chkBoxPhone.Checked;
             var sassStr = "@mixin " + txtName.Text + "{background:url(" + txtDir.Text + "/" + txtName.Text + "." + GetImgExt() + ") no-repeat;" + (isPhone ? "background-size:" + _bigSize.Width / 2 + "px " + _bigSize.Height / 2 + "px" : "") + " }" + Environment.NewLine;
@@ -270,15 +299,77 @@ namespace CssBgImageMergeTool
             return string.Empty;
         }
 
+        /// <summary>
+        /// 画出图片
+        /// </summary>
+        /// <param name="img">图片</param>
+        /// <param name="left">左边</param>
+        /// <param name="top">上边</param>
         private void AddPictureBox(Image img, int left, int top)
         {
             PictureBox pb = new PictureBox();
             pb.Image = img;
             pb.Location = new System.Drawing.Point(left, top);
+            pb.Cursor = Cursors.SizeAll;
+            pb.BorderStyle =BorderStyle.FixedSingle ;
             pb.Name = "pb_" + left + "_" + top;
             pb.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            pb.Click += pb_Click;
+            pb.MouseDown += pb_MouseDown;
+            pb.MouseMove += pb_MouseMove;
+            pb.MouseUp += pb_MouseUp;
             panelImages.Controls.Add(pb);
             pb.Show();
+        }
+
+        #region 拖动
+        bool _isDragged = false;
+        Point _dragStartLocation;
+        void pb_MouseUp(object sender, MouseEventArgs e)
+        {
+            _isDragged = false;
+        }
+
+        void pb_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (_isDragged)
+            {
+                PictureBox pb = sender as PictureBox;
+                Point p = e.Location;
+                int x = Math.Max(0, pb.Location.X + p.X - _dragStartLocation.X);
+                int y = Math.Max(0, pb.Location.Y + p.Y - _dragStartLocation.Y);
+                pb.Location = new Point(x, y);
+                panelImages.Refresh();
+                SetCssText();
+            }
+        }
+
+        void pb_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                _isDragged = true;
+                _dragStartLocation = new Point(e.X, e.Y);
+            }
+            else
+            {
+                _isDragged = false;
+            }
+        }
+        #endregion
+
+        void pb_Click(object sender, EventArgs e)
+        {
+            PictureBox pb = (PictureBox)sender;
+            if (pb != null) {
+                if (_selectedPicture != null) {
+                    _selectedPicture.BorderStyle = BorderStyle.None;
+                }
+                int left = pb.Left;
+                int top = pb.Top;
+
+            }
+            
         }
 
         private void ButtonMakeBigImageCss_Click(object sender, EventArgs e)
@@ -303,13 +394,9 @@ namespace CssBgImageMergeTool
                 string imgPath = Path.Combine(imgDir, txtName.Text+"."+GetImgExt());
                 if (File.Exists(imgPath))
                 {
-                    if (DialogResult.Yes ==
+                    if (DialogResult.Yes !=
                         MessageBox.Show("选定文件夹中已存在" + txtName.Text + "." + GetImgExt() + "，继续执行将覆盖已存在文件，是否继续？", "询问"
                         , MessageBoxButtons.YesNo, MessageBoxIcon.Question))
-                    {
-
-                    }
-                    else
                     {
                         return;
                     }
@@ -367,6 +454,8 @@ namespace CssBgImageMergeTool
 
                         if (bgColor == Color.Transparent && (format == ImageFormat.Jpeg|| format == ImageFormat.Gif)) g.Clear(Color.White);
                         else g.Clear(bgColor);
+                        SetCssText();
+                        /*
                         var isPhone = chkBoxPhone.Checked;
 
                         var sassStr = "@mixin " + txtName.Text + "{background:url(" + txtDir.Text + "/" + txtName.Text + "." + GetImgExt() + ") no-repeat;" + (isPhone ?"background-size:"+_bigSize.Width/2+"px "+_bigSize.Height/2+"px":"")+ " }" + Environment.NewLine;
@@ -381,6 +470,7 @@ namespace CssBgImageMergeTool
                         }
                         txtSass.Text = sassStr;
                         txtCss.Text = cssStr;
+                        */
                     }
                     //保存图片
                     bigImg.Save(imgPath, format);
@@ -421,6 +511,11 @@ namespace CssBgImageMergeTool
             comboBoxBgColor.Text = "Transparent";
         }
 
+
+        /// <summary>
+        /// 获取颜色
+        /// </summary>
+        /// <returns></returns>
         Color GetBgColor()
         {
             Color bgColor = Color.Transparent;
@@ -531,5 +626,7 @@ namespace CssBgImageMergeTool
         {
             SetCssText();
         }
+
+
     }
 }

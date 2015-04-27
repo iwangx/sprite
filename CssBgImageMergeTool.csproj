@@ -53,10 +53,6 @@
     <ApplicationIcon>文件名.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ImageManipulation, Version=1.0.3274.30275, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\ImageManipulation.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
@@ -98,8 +94,14 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="123.ico" />
+    <Content Include="open.png" />
     <Content Include="favicon.ico" />
+    <None Include="Resources\horizontal.png" />
+    <None Include="Resources\vertical.png" />
+    <None Include="Resources\QQ截图20150427150408.png" />
+    <None Include="Resources\QQ截图201504271504081.png" />
+    <None Include="Resources\QQ截图201504271504082.png" />
+    <None Include="Resources\download.png" />
     <Content Include="文件名.ico" />
   </ItemGroup>
   <ItemGroup>
