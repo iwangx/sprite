@@ -65,6 +65,7 @@
             // 
             // comboBoxImgType
             // 
+            this.comboBoxImgType.BackColor = System.Drawing.Color.White;
             this.comboBoxImgType.FormattingEnabled = true;
             this.comboBoxImgType.Items.AddRange(new object[] {
             "Png",
@@ -303,7 +304,7 @@
             this.buttonHRange.Name = "buttonHRange";
             this.buttonHRange.Size = new System.Drawing.Size(134, 40);
             this.buttonHRange.TabIndex = 5;
-            this.buttonHRange.Text = "小图横排";
+            this.buttonHRange.Text = "小图竖排";
             this.buttonHRange.UseVisualStyleBackColor = false;
             this.buttonHRange.Click += new System.EventHandler(this.buttonHRange_Click);
             // 
