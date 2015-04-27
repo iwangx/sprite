@@ -11,7 +11,7 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Globalization;
 using System.Drawing.Drawing2D;
-using ImageManipulation;
+//using ImageManipulation;
 using System.Collections;
 
 namespace CssBgImageMergeTool
@@ -213,7 +213,7 @@ namespace CssBgImageMergeTool
         }
 
         
-
+        //小图横排点击
         private void ButtonVRange_Click(object sender, EventArgs e)
         {
             if (!AssertFiles()) return;
@@ -382,18 +382,8 @@ namespace CssBgImageMergeTool
                         txtSass.Text = sassStr;
                         txtCss.Text = cssStr;
                     }
-                    if (format == ImageFormat.Gif)
-                    {
-                        OctreeQuantizer quantizer = new OctreeQuantizer(255, 8);
-                        using (Bitmap quantized = quantizer.Quantize(bigImg))
-                        {
-                            quantized.Save(imgPath, format);
-                        }
-                    }
-                    else {
-                        bigImg.Save(imgPath, format);
-                    }
-                    //parameters.Dispose();
+                    //保存图片
+                    bigImg.Save(imgPath, format);
                         
                 }
                 MessageBox.Show("图片生成成功！");
@@ -512,6 +502,7 @@ namespace CssBgImageMergeTool
             SetCssText();
         }
 
+        //小图横排点击
         private void buttonHRange_Click(object sender, EventArgs e)
         {
             if (!AssertFiles()) return;

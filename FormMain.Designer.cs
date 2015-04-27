@@ -112,8 +112,8 @@
             this.comboBoxImgType.FormattingEnabled = true;
             this.comboBoxImgType.Items.AddRange(new object[] {
             "Png",
-            "Jpeg",
-            "Gif"});
+            "Jpg",
+            "Jpeg"});
             this.comboBoxImgType.Location = new System.Drawing.Point(86, 503);
             this.comboBoxImgType.Name = "comboBoxImgType";
             this.comboBoxImgType.Size = new System.Drawing.Size(121, 20);
