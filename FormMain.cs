@@ -345,7 +345,7 @@ namespace CssSprite
                 int x = Math.Max(0, pb.Location.X + p.X - _dragStartLocation.X);
                 int y = Math.Max(0, pb.Location.Y + p.Y - _dragStartLocation.Y);
                 pb.Location = new Point(x, y);
-                panelImages.Refresh();
+                panelImages.ResumeLayout(false);
                 SetCssText();
             }
         }
