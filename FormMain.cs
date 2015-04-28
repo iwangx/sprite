@@ -41,6 +41,12 @@ namespace CssSprite
             resize();
         }
 
+        private void FormMain_Load(object sender, EventArgs e)
+        {
+            comboBoxBgColor.DataSource = Enum.GetNames(typeof(KnownColor));
+            comboBoxBgColor.Text = "Transparent";
+        }
+
         void FormMain_Resize(object sender, EventArgs e)
         {
             resize();
@@ -273,13 +279,13 @@ namespace CssSprite
         public void SetCssText() {
             var isPhone = chkBoxPhone.Checked;
             var sassStr = "@mixin " + txtName.Text + "{background:url(" + txtDir.Text + "/" + txtName.Text + "." + GetImgExt() + ") no-repeat;" + (isPhone ? "background-size:" + _bigSize.Width / 2 + "px " + _bigSize.Height / 2 + "px" : "") + " }" + Environment.NewLine;
-            var cssStr = "." + txtName.Text + "{background:url(" + txtDir.Text + "/" + txtName.Text + "." + GetImgExt() + ")  no-repeat" + (isPhone ? "background-size:" + _bigSize.Width / 2 + "px " + _bigSize.Height / 2 + "px" : "") + "}" + Environment.NewLine;
+            var cssStr = "." + txtName.Text + "{background:url(" + txtDir.Text + "/" + txtName.Text + "." + GetImgExt() + ")  no-repeat;" + (isPhone ? "background-size:" + _bigSize.Width / 2 + "px " + _bigSize.Height / 2 + "px" : "") + "}" + Environment.NewLine;
                                 
             //var sassStr = "@mixin " + txtName.Text + "{background:url(" + txtDir.Text + "/" + txtName.Text + "." + GetImgExt() + ") no-repeat }" + Environment.NewLine;
             //var cssStr = "." + txtName.Text + "{background:url(" + txtDir.Text + "/" + txtName.Text + "." + GetImgExt() + ")  no-repeat}" + Environment.NewLine;
             foreach (PictureBox pb in panelImages.Controls)
             {
-                string imgName = GetImgName(pb.Image);
+                //string imgName = GetImgName(pb.Image);
                 sassStr += GetSassCss(pb.Image, pb.Left, pb.Top);
                 cssStr += GetCss(pb.Image, pb.Left, pb.Top);
             }
@@ -374,7 +380,6 @@ namespace CssSprite
 
         private void ButtonMakeBigImageCss_Click(object sender, EventArgs e)
         {
-            
             panelImages.VerticalScroll.Value=0 ;
             panelImages.HorizontalScroll.Value = 0;
             if (_imgList == null || _imgList.Count < 2)
@@ -404,17 +409,38 @@ namespace CssSprite
 
                 if (_selectedPicture != null) _selectedPicture.BorderStyle = BorderStyle.None;
 
-                int w; int h;
-                w = h = 0;
+                int maxWidth,maxHeight,minWidth,minHeight;
+                maxWidth = maxHeight = minWidth = minHeight = 0;
+                //循环获取距离左边和上边最小距离
                 foreach (PictureBox pb in panelImages.Controls)
                 {
-                    w = Math.Max(w, pb.Location.X + pb.Image.Width);
-                    h = Math.Max(h, pb.Location.Y + pb.Image.Height);
+                    if (panelImages.Controls.GetChildIndex(pb)==0) 
+                    {
+                        minWidth = pb.Location.X;
+                        minHeight = pb.Location.Y;
+                    } 
+                    
+                    minWidth = Math.Min(minWidth, pb.Location.X);
+                    minHeight = Math.Min(minHeight, pb.Location.Y);
                 }
-                Size imgSize = new Size(w, h);
-
                 Color bgColor = GetBgColor();
-
+                //把所有元素按照0，0点为标准，通过最小向上距离和向左距离平移，获取最大距离
+                foreach (PictureBox pb in panelImages.Controls)
+                {
+                    var point = new Point(pb.Location.X, pb.Location.Y);
+                    if (minHeight != 0)
+                    {
+                        point.Y = pb.Location.Y - minHeight;
+                    }
+                    if (minWidth != 0)
+                    {
+                        point.X = pb.Location.X - minWidth;
+                    }
+                    pb.Location = point;
+                    maxWidth = Math.Max(maxWidth, pb.Location.X + pb.Image.Width);
+                    maxHeight = Math.Max(maxHeight, pb.Location.Y + pb.Image.Height);
+                }
+                Size imgSize = new Size(maxWidth, maxHeight);
                 var codeMime = string.Empty;
                 using (Bitmap bigImg = new Bitmap(imgSize.Width, imgSize.Height, PixelFormat.Format32bppArgb))
                 {
@@ -455,26 +481,13 @@ namespace CssSprite
                         if (bgColor == Color.Transparent && (format == ImageFormat.Jpeg|| format == ImageFormat.Gif)) g.Clear(Color.White);
                         else g.Clear(bgColor);
                         SetCssText();
-                        /*
-                        var isPhone = chkBoxPhone.Checked;
-
-                        var sassStr = "@mixin " + txtName.Text + "{background:url(" + txtDir.Text + "/" + txtName.Text + "." + GetImgExt() + ") no-repeat;" + (isPhone ?"background-size:"+_bigSize.Width/2+"px "+_bigSize.Height/2+"px":"")+ " }" + Environment.NewLine;
-                        var cssStr = "." + txtName.Text + "{background:url(" + txtDir.Text + "/" + txtName.Text + "." + GetImgExt() + ")  no-repeat" + (isPhone ? "background-size:" + _bigSize.Width / 2 + "px " + _bigSize.Height / 2 + "px" : "") + "}" + Environment.NewLine;
-                        
                         foreach (PictureBox pb in panelImages.Controls)
                         {
-                            string imgName = GetImgName(pb.Image);
                             g.DrawImage(pb.Image, pb.Location.X, pb.Location.Y, pb.Image.Width, pb.Image.Height);
-                            sassStr += GetSassCss(pb.Image, pb.Left, pb.Top);
-                            cssStr += GetCss(pb.Image, pb.Left, pb.Top);
                         }
-                        txtSass.Text = sassStr;
-                        txtCss.Text = cssStr;
-                        */
                     }
                     //保存图片
                     bigImg.Save(imgPath, format);
-                        
                 }
                 MessageBox.Show("图片生成成功！");
             }
@@ -505,11 +518,7 @@ namespace CssSprite
             return false;
         }
 
-        private void FormMain_Load(object sender, EventArgs e)
-        {
-            comboBoxBgColor.DataSource = Enum.GetNames(typeof(KnownColor));
-            comboBoxBgColor.Text = "Transparent";
-        }
+        
 
 
         /// <summary>
