@@ -1,4 +1,4 @@
-﻿namespace CssBgImageMergeTool
+﻿namespace CssSprite
 {
     partial class FormMain
     {
@@ -266,7 +266,7 @@
             this.buttonBrowse.FlatAppearance.BorderSize = 0;
             this.buttonBrowse.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.buttonBrowse.ForeColor = System.Drawing.Color.White;
-            this.buttonBrowse.Image = global::CssBgImageMergeTool.Properties.Resources.open;
+            this.buttonBrowse.Image = global::CssSprite.Properties.Resources.open;
             this.buttonBrowse.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.buttonBrowse.Location = new System.Drawing.Point(12, 10);
             this.buttonBrowse.Name = "buttonBrowse";
@@ -282,7 +282,7 @@
             this.buttonVRange.FlatAppearance.BorderSize = 0;
             this.buttonVRange.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.buttonVRange.ForeColor = System.Drawing.Color.White;
-            this.buttonVRange.Image = global::CssBgImageMergeTool.Properties.Resources.horizontal;
+            this.buttonVRange.Image = global::CssSprite.Properties.Resources.horizontal;
             this.buttonVRange.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.buttonVRange.Location = new System.Drawing.Point(277, 10);
             this.buttonVRange.Name = "buttonVRange";
@@ -298,7 +298,7 @@
             this.buttonHRange.FlatAppearance.BorderSize = 0;
             this.buttonHRange.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.buttonHRange.ForeColor = System.Drawing.Color.White;
-            this.buttonHRange.Image = global::CssBgImageMergeTool.Properties.Resources.vertical;
+            this.buttonHRange.Image = global::CssSprite.Properties.Resources.vertical;
             this.buttonHRange.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.buttonHRange.Location = new System.Drawing.Point(437, 10);
             this.buttonHRange.Name = "buttonHRange";
@@ -313,7 +313,7 @@
             this.buttonMakeBigImageCss.BackColor = System.Drawing.Color.RoyalBlue;
             this.buttonMakeBigImageCss.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.buttonMakeBigImageCss.ForeColor = System.Drawing.Color.White;
-            this.buttonMakeBigImageCss.Image = global::CssBgImageMergeTool.Properties.Resources.download;
+            this.buttonMakeBigImageCss.Image = global::CssSprite.Properties.Resources.download;
             this.buttonMakeBigImageCss.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.buttonMakeBigImageCss.Location = new System.Drawing.Point(595, 10);
             this.buttonMakeBigImageCss.Name = "buttonMakeBigImageCss";
@@ -327,7 +327,7 @@
             // 
             this.panelImages.AutoScroll = true;
             this.panelImages.BackColor = System.Drawing.Color.Transparent;
-            this.panelImages.BackgroundImage = global::CssBgImageMergeTool.Properties.Resources.QQ截图201504271504082;
+            this.panelImages.BackgroundImage = global::CssSprite.Properties.Resources.QQ截图201504271504082;
             this.panelImages.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panelImages.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelImages.Location = new System.Drawing.Point(3, 63);

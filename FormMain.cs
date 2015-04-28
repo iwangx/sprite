@@ -14,7 +14,7 @@ using System.Drawing.Drawing2D;
 //using ImageManipulation;
 using System.Collections;
 
-namespace CssBgImageMergeTool
+namespace CssSprite
 {
     public partial class FormMain : Form
     {

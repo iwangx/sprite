@@ -8,7 +8,7 @@
     <ProjectGuid>{76710A71-54D4-4AB4-A0F3-7CFC662D7C96}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CssBgImageMergeTool</RootNamespace>
+    <RootNamespace>CssSprite</RootNamespace>
     <AssemblyName>CssSprite</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileUpgradeFlags>
@@ -95,14 +95,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="logo.ico" />
-    <Content Include="open.png" />
     <Content Include="favicon.ico" />
     <None Include="Resources\horizontal.png" />
     <None Include="Resources\vertical.png" />
     <None Include="Resources\QQ截图201504271504082.png" />
     <None Include="Resources\download.png" />
     <None Include="Resources\open.png" />
-    <Content Include="文件名.ico" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
