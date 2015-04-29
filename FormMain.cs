@@ -39,6 +39,18 @@ namespace CssSprite
             InitializeComponent();
             this.Resize += FormMain_Resize;
             resize();
+            panelImages.MouseWheel += panelImages_MouseWheel;
+            panelImages.MouseHover += panelImages_MouseHover;
+        }
+
+        void panelImages_MouseHover(object sender, EventArgs e)
+        {
+            panelImages.Focus();
+        }
+
+        void panelImages_MouseWheel(object sender, MouseEventArgs e)
+        {
+            panelImages.ResumeLayout(false);
         }
 
         private void FormMain_Load(object sender, EventArgs e)
