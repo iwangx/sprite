@@ -20,8 +20,4 @@ css雪碧图简单制作工具
 
 # CSDN下载地址(多支持下吧)
 
-http://download.csdn.net/detail/wx247919365/8641795
-
-# 百度网盘下载地址
-
-http://pan.baidu.com/s/1hqJ6aC8
+http://download.csdn.net/detail/wx247919365/8645533
