@@ -51,6 +51,7 @@ namespace CssSprite
         void panelImages_MouseWheel(object sender, MouseEventArgs e)
         {
             panelImages.ResumeLayout(false);
+            panelImages.Refresh();
         }
 
         private void FormMain_Load(object sender, EventArgs e)
@@ -165,7 +166,6 @@ namespace CssSprite
 
         private PictureBox _selectedPicture=null;
         private Size _bigSize;
-        private bool _isVerticle=false;
 
 
         string GetImgExt()
@@ -282,8 +282,6 @@ namespace CssSprite
             panelImages.ResumeLayout(false);
 
             SetCssText();
-            
-            _isVerticle = true;
 
         }
 
@@ -297,7 +295,6 @@ namespace CssSprite
             //var cssStr = "." + txtName.Text + "{background:url(" + txtDir.Text + "/" + txtName.Text + "." + GetImgExt() + ")  no-repeat}" + Environment.NewLine;
             foreach (PictureBox pb in panelImages.Controls)
             {
-                //string imgName = GetImgName(pb.Image);
                 sassStr += GetSassCss(pb.Image, pb.Left, pb.Top);
                 cssStr += GetCss(pb.Image, pb.Left, pb.Top);
             }
@@ -639,7 +636,6 @@ namespace CssSprite
             }
 
             panelImages.ResumeLayout(false);
-            _isVerticle = false;
             SetCssText();
         }
 
@@ -648,6 +644,10 @@ namespace CssSprite
             SetCssText();
         }
 
-
+        private void btn_Click(object sender, EventArgs e)
+        {
+            AboutUs a=new AboutUs();
+            a.ShowDialog();
+        }
     }
 }

@@ -46,12 +46,13 @@
             this.colorDialog = new System.Windows.Forms.ColorDialog();
             this.chkBoxPhone = new System.Windows.Forms.CheckBox();
             this.panelTop = new System.Windows.Forms.Panel();
+            this.panelBottom = new System.Windows.Forms.Panel();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.btn = new System.Windows.Forms.Button();
             this.buttonBrowse = new System.Windows.Forms.Button();
             this.buttonVRange = new System.Windows.Forms.Button();
             this.buttonHRange = new System.Windows.Forms.Button();
             this.buttonMakeBigImageCss = new System.Windows.Forms.Button();
-            this.panelBottom = new System.Windows.Forms.Panel();
-            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panelImages = new System.Windows.Forms.Panel();
             this.panelTop.SuspendLayout();
             this.panelBottom.SuspendLayout();
@@ -211,6 +212,7 @@
             // 
             // panelTop
             // 
+            this.panelTop.Controls.Add(this.btn);
             this.panelTop.Controls.Add(this.buttonBrowse);
             this.panelTop.Controls.Add(this.buttonVRange);
             this.panelTop.Controls.Add(this.buttonHRange);
@@ -221,6 +223,57 @@
             this.panelTop.Padding = new System.Windows.Forms.Padding(0, 20, 0, 20);
             this.panelTop.Size = new System.Drawing.Size(839, 54);
             this.panelTop.TabIndex = 21;
+            // 
+            // panelBottom
+            // 
+            this.panelBottom.Controls.Add(this.txtDir);
+            this.panelBottom.Controls.Add(this.chkBoxPhone);
+            this.panelBottom.Controls.Add(this.label1);
+            this.panelBottom.Controls.Add(this.txtCss);
+            this.panelBottom.Controls.Add(this.label3);
+            this.panelBottom.Controls.Add(this.radioBtnSass);
+            this.panelBottom.Controls.Add(this.radioBtnCss);
+            this.panelBottom.Controls.Add(this.comboBoxImgType);
+            this.panelBottom.Controls.Add(this.txtName);
+            this.panelBottom.Controls.Add(this.comboBoxBgColor);
+            this.panelBottom.Controls.Add(this.label5);
+            this.panelBottom.Controls.Add(this.txtSass);
+            this.panelBottom.Controls.Add(this.label2);
+            this.panelBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panelBottom.Location = new System.Drawing.Point(3, 241);
+            this.panelBottom.Name = "panelBottom";
+            this.panelBottom.Size = new System.Drawing.Size(839, 301);
+            this.panelBottom.TabIndex = 0;
+            // 
+            // tableLayoutPanel1
+            // 
+            this.tableLayoutPanel1.ColumnCount = 1;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.Controls.Add(this.panelTop, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.panelBottom, 0, 2);
+            this.tableLayoutPanel1.Controls.Add(this.panelImages, 0, 1);
+            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.RowCount = 3;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 60F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 307F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(845, 545);
+            this.tableLayoutPanel1.TabIndex = 0;
+            // 
+            // btn
+            // 
+            this.btn.BackColor = System.Drawing.Color.White;
+            this.btn.FlatAppearance.BorderSize = 0;
+            this.btn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btn.Image = global::CssSprite.Properties.Resources.question;
+            this.btn.Location = new System.Drawing.Point(772, 10);
+            this.btn.Name = "btn";
+            this.btn.Size = new System.Drawing.Size(55, 40);
+            this.btn.TabIndex = 21;
+            this.btn.UseVisualStyleBackColor = false;
+            this.btn.Click += new System.EventHandler(this.btn_Click);
             // 
             // buttonBrowse
             // 
@@ -285,44 +338,6 @@
             this.buttonMakeBigImageCss.UseVisualStyleBackColor = false;
             this.buttonMakeBigImageCss.Click += new System.EventHandler(this.ButtonMakeBigImageCss_Click);
             // 
-            // panelBottom
-            // 
-            this.panelBottom.Controls.Add(this.txtDir);
-            this.panelBottom.Controls.Add(this.chkBoxPhone);
-            this.panelBottom.Controls.Add(this.label1);
-            this.panelBottom.Controls.Add(this.txtCss);
-            this.panelBottom.Controls.Add(this.label3);
-            this.panelBottom.Controls.Add(this.radioBtnSass);
-            this.panelBottom.Controls.Add(this.radioBtnCss);
-            this.panelBottom.Controls.Add(this.comboBoxImgType);
-            this.panelBottom.Controls.Add(this.txtName);
-            this.panelBottom.Controls.Add(this.comboBoxBgColor);
-            this.panelBottom.Controls.Add(this.label5);
-            this.panelBottom.Controls.Add(this.txtSass);
-            this.panelBottom.Controls.Add(this.label2);
-            this.panelBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelBottom.Location = new System.Drawing.Point(3, 241);
-            this.panelBottom.Name = "panelBottom";
-            this.panelBottom.Size = new System.Drawing.Size(839, 301);
-            this.panelBottom.TabIndex = 0;
-            // 
-            // tableLayoutPanel1
-            // 
-            this.tableLayoutPanel1.ColumnCount = 1;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Controls.Add(this.panelTop, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.panelBottom, 0, 2);
-            this.tableLayoutPanel1.Controls.Add(this.panelImages, 0, 1);
-            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
-            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 3;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 60F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 307F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(845, 545);
-            this.tableLayoutPanel1.TabIndex = 0;
-            // 
             // panelImages
             // 
             this.panelImages.AutoScroll = true;
@@ -380,6 +395,7 @@
         private System.Windows.Forms.Panel panelTop;
         private System.Windows.Forms.Panel panelBottom;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.Button btn;
     }
 }
 

@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // 有关程序集的常规信息通过下列属性集
 // 控制。更改这些属性值可修改
 // 与程序集关联的信息。
-[assembly: AssemblyTitle("CssBgImageMergeTool")]
-[assembly: AssemblyDescription("Css背景图合并工具 http://www.cnblogs.com/yukaizhao/archive/2008/12/10/css_bgimage_merge_tool.html")]
+[assembly: AssemblyTitle("CssSprite")]
+[assembly: AssemblyDescription("http://www.cnblogs.com/wang4517/archive/2015/04/29/4464852.html")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("玉开")]
-[assembly: AssemblyProduct("CssBgImageMergeTool")]
-[assembly: AssemblyCopyright("版权所有 (C) 玉开 2008")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct("CssSprite")]
+[assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -30,4 +30,4 @@ using System.Runtime.InteropServices;
 //      修订号
 //
 [assembly: AssemblyVersion("0.1.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyFileVersion("2.0.0.0")]
