@@ -109,14 +109,29 @@ namespace CssSprite
                     {
                         _imgList = new List<ImageInfo>();
                     }
+                    var noFile = "这些文件不存在：" + Environment.NewLine;
+                    var hasFile=false;
                     foreach (Sprite s in spriteFile.SpriteList)
                     {
-                        Image img = Image.FromFile(folderBrowserDialog.SelectedPath+"\\"+ s.Path);
-                        string imgName = Path.GetFileNameWithoutExtension(s.Path);
-                        ImageInfo imgInfo = new ImageInfo(img, imgName, s.Path);
-                        img.Tag = imgInfo;
-                        _imgList.Add(imgInfo);
-                        AddPictureBox(img, s.LocationX, s.LocationY);
+                        var path=folderBrowserDialog.SelectedPath+"\\"+ s.Path;
+                        if (File.Exists(path))
+                        {
+                            Image img = Image.FromFile(path);
+                            string imgName = Path.GetFileNameWithoutExtension(s.Path);
+                            ImageInfo imgInfo = new ImageInfo(img, imgName, s.Path);
+                            img.Tag = imgInfo;
+                            _imgList.Add(imgInfo);
+                            AddPictureBox(img, s.LocationX, s.LocationY);
+                        }
+                        else 
+                        {
+                            hasFile=true;
+                            noFile += path + Environment.NewLine;
+                        }
+                    }
+                    if (hasFile) 
+                    {
+                        MessageBox.Show(noFile, "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     }
                     txtDir.Text = spriteFile.CssFileName;
                     txtName.Text = spriteFile.ImageName;
