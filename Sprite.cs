@@ -5,7 +5,6 @@ using System.Xml.Serialization;
 
 namespace CssSprite
 {
-    [XmlRootAttribute("Sprite", Namespace = "CssSprite", IsNullable = false)]
     public class Sprite
     {
         /// <summary>

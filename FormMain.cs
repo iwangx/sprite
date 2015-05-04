@@ -105,15 +105,15 @@ namespace CssSprite
                 dialogFile = dialogFile.Substring(0, index);
                 folderBrowserDialog.SelectedPath = dialogFile;
 
-                var list = new List<Sprite>();
+                var list=new SpriteFile();
                 try
                 {
-                    list = (List<Sprite>)XmlSerializer.LoadFromXml(openFileDialog.FileNames[0], list.GetType());
+                    list = (SpriteFile)XmlSerializer.LoadFromXml(openFileDialog.FileNames[0], list.GetType());
                     if (_imgList == null)
                     {
                         _imgList = new List<ImageInfo>();
                     }
-                    foreach (Sprite s in list) 
+                    foreach (Sprite s in list.SpriteList) 
                     {
                         Image img = Image.FromFile(s.Path);
                         string imgName = Path.GetFileNameWithoutExtension(s.Path);
@@ -129,6 +129,54 @@ namespace CssSprite
                 {
                     MessageBox.Show(ex.Message + Environment.NewLine + ".sprite文件被损坏，无法打开！");
                 }
+            }
+        }
+
+        private void btnAdd_Click(object sender, EventArgs e)
+        {
+            openFileDialog.Filter = "Png文件|*.png|Jpeg文件|*.jpeg|Jpg文件|*.jpg";
+            openFileDialog.Multiselect = false;
+            DialogResult dr = openFileDialog.ShowDialog();
+            if (DialogResult.OK == dr && openFileDialog.FileNames.Length > 0)
+            {
+                if (_imgList == null)
+                {
+                    _imgList = new List<ImageInfo>();
+                }
+                var fileName = openFileDialog.FileNames[0];
+                if (!IsImgExists(fileName))
+                {
+                    Image img = Image.FromFile(fileName);
+                    string imgName = Path.GetFileNameWithoutExtension(fileName);
+                    ImageInfo imgInfo = new ImageInfo(img, imgName, fileName);
+                    img.Tag = imgInfo;
+                    _imgList.Add(imgInfo);
+                    AddPictureBox(img, 0, 0);
+                }
+            }
+        }
+
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+            if (_selectedPicture != null)
+            { 
+                var dr =  MessageBox.Show("确定删除图片：" + ((ImageInfo)_selectedPicture.Image.Tag).Name + " ？", "询问", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (dr == DialogResult.Yes) {
+                    foreach (ImageInfo info in _imgList)
+                    {
+                        if (info.Image == _selectedPicture.Image)
+                        {
+                            _imgList.Remove(info);
+                            break;
+                        }
+                    }
+                    panelImages.Controls.Remove(_selectedPicture);
+                    _selectedPicture = null;
+                }
+            }
+            else
+            {
+                MessageBox.Show("请选中你需要移除的图片！");
             }
         }
 
@@ -282,7 +330,6 @@ namespace CssSprite
         private void ButtonVRange_Click(object sender, EventArgs e)
         {
             if (!AssertFiles()) return;
-            _bigSize = new Size(0, 0);
             panelImages.Controls.Clear();
             int left = 0;
             int top = 0;
@@ -295,8 +342,6 @@ namespace CssSprite
 
                 AddPictureBox(img, left, top);
                 currentHeight += img.Height;
-                _bigSize.Height += img.Height;
-                _bigSize.Width = Math.Max(_bigSize.Width, img.Width);
             }
             panelImages.ResumeLayout(false);
             SetCssText();
@@ -307,9 +352,6 @@ namespace CssSprite
             var isPhone = chkBoxPhone.Checked;
             var sassStr = "@mixin " + txtName.Text + "{background:url(" + txtDir.Text + "/" + txtName.Text + "." + GetImgExt() + ") no-repeat;" + (isPhone ? "background-size:" + _bigSize.Width / 2 + "px " + _bigSize.Height / 2 + "px" : "") + " }" + Environment.NewLine;
             var cssStr = "." + txtName.Text + "{background:url(" + txtDir.Text + "/" + txtName.Text + "." + GetImgExt() + ")  no-repeat;" + (isPhone ? "background-size:" + _bigSize.Width / 2 + "px " + _bigSize.Height / 2 + "px" : "") + "}" + Environment.NewLine;
-                                
-            //var sassStr = "@mixin " + txtName.Text + "{background:url(" + txtDir.Text + "/" + txtName.Text + "." + GetImgExt() + ") no-repeat }" + Environment.NewLine;
-            //var cssStr = "." + txtName.Text + "{background:url(" + txtDir.Text + "/" + txtName.Text + "." + GetImgExt() + ")  no-repeat}" + Environment.NewLine;
             foreach (PictureBox pb in panelImages.Controls)
             {
                 sassStr += GetSassCss(pb.Image, pb.Left, pb.Top);
@@ -346,7 +388,7 @@ namespace CssSprite
             pb.BorderStyle =BorderStyle.FixedSingle ;
             pb.Name = "pb_" + left + "_" + top;
             pb.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            pb.Click += pb_Click;
+            //pb.Click += pb_Click;
             pb.MouseDown += pb_MouseDown;
             pb.MouseMove += pb_MouseMove;
             pb.MouseUp += pb_MouseUp;
@@ -380,6 +422,7 @@ namespace CssSprite
         {
             if (e.Button == MouseButtons.Left)
             {
+                _selectedPicture = (PictureBox)sender;
                 _isDragged = true;
                 _dragStartLocation = new Point(e.X, e.Y);
             }
@@ -388,20 +431,18 @@ namespace CssSprite
                 _isDragged = false;
             }
         }
+
+
         #endregion
 
         void pb_Click(object sender, EventArgs e)
         {
             PictureBox pb = (PictureBox)sender;
-            if (pb != null) {
-                if (_selectedPicture != null) {
-                    _selectedPicture.BorderStyle = BorderStyle.None;
-                }
-                int left = pb.Left;
-                int top = pb.Top;
-
+            if (_selectedPicture != null)
+            {
+                _selectedPicture.BorderStyle = BorderStyle.None;
             }
-            
+            pb.BorderStyle = BorderStyle.FixedSingle;
         }
 
         private void ButtonMakeBigImageCss_Click(object sender, EventArgs e)
@@ -432,8 +473,6 @@ namespace CssSprite
                         return;
                     }
                 }
-
-                if (_selectedPicture != null) _selectedPicture.BorderStyle = BorderStyle.None;
 
                 int maxWidth,maxHeight,minWidth,minHeight;
                 maxWidth = maxHeight = minWidth = minHeight = 0;
@@ -507,17 +546,17 @@ namespace CssSprite
                         if (bgColor == Color.Transparent && (format == ImageFormat.Jpeg|| format == ImageFormat.Gif)) g.Clear(Color.White);
                         else g.Clear(bgColor);
                         SetCssText();
-                        var sproteList = new List<Sprite>();
+                        var sprite = new SpriteFile() { CssFileName = txtDir.Text, ImageName = txtName.Text, SpriteList = new List<Sprite>(), IsPhone = chkBoxPhone.Checked };
                         foreach (PictureBox pb in panelImages.Controls)
                         {
                             var img=(ImageInfo) pb.Image.Tag;
                             Sprite s = new Sprite() { Path = img.FileName, LocationY = pb.Location.Y, LocationX = pb.Location.X };
-                            sproteList.Add(s);
+                            sprite.SpriteList.Add(s);
                             g.DrawImage(pb.Image, pb.Location.X, pb.Location.Y, pb.Image.Width, pb.Image.Height);
                         }
                         try
                         {
-                            XmlSerializer.SaveToXml(folderBrowserDialog.SelectedPath + "\\" + txtName.Text + ".sprite", sproteList);
+                            XmlSerializer.SaveToXml(folderBrowserDialog.SelectedPath + "//" + txtName.Text + ".sprite", sprite);
                         }
                         catch (Exception ex)
                         {
@@ -535,8 +574,6 @@ namespace CssSprite
                         MessageBox.Show(ex.Message+"图片生成失败，被覆盖文件可能被其他程序占用，请换个文件名！");
                     }
                 }
-               
-                
             }
         }
 
@@ -657,9 +694,7 @@ namespace CssSprite
         private void buttonHRange_Click(object sender, EventArgs e)
         {
             if (!AssertFiles()) return;
-
             panelImages.Controls.Clear();
-            _bigSize = new Size(0, 0);
             int left = 0;
             int top = 0;
             foreach (ImageInfo ii in _imgList)
@@ -667,8 +702,6 @@ namespace CssSprite
                 Image img = ii.Image;
                 AddPictureBox(img, left, top);
                 left += img.Width;
-                _bigSize.Width += img.Width;
-                _bigSize.Height = Math.Max(_bigSize.Height, img.Height);
             }
 
             panelImages.ResumeLayout(false);
