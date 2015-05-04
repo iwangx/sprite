@@ -19,6 +19,7 @@ namespace CssSprite
     {
         private List<ImageInfo> _imgList;
         private string dialogFile = string.Empty;
+        private string basePath;
         internal class ImageInfo
         {
             internal ImageInfo(Image img, string name, string fileName)
@@ -82,10 +83,8 @@ namespace CssSprite
                 {
                     return;
                 }
-                dialogFile = openFileDialog.FileName;
-                var index = dialogFile.LastIndexOf("\\");
-                dialogFile=dialogFile.Substring(0, index);
-                folderBrowserDialog.SelectedPath = dialogFile;
+                basePath = Path.GetDirectoryName(openFileDialog.FileName);
+                folderBrowserDialog.SelectedPath = basePath;
                 LoadImages(openFileDialog.FileNames);
                 ButtonVRange_Click(null, EventArgs.Empty);
             }
@@ -100,28 +99,28 @@ namespace CssSprite
             DialogResult dr = openFileDialog.ShowDialog();
             if (DialogResult.OK == dr && openFileDialog.FileNames.Length > 0)
             {
-                dialogFile = openFileDialog.FileName;
-                var index = dialogFile.LastIndexOf("\\");
-                dialogFile = dialogFile.Substring(0, index);
-                folderBrowserDialog.SelectedPath = dialogFile;
-
-                var list=new SpriteFile();
+                basePath = Path.GetDirectoryName(openFileDialog.FileName);
+                folderBrowserDialog.SelectedPath = basePath;
+                var spriteFile=new SpriteFile();
                 try
                 {
-                    list = (SpriteFile)XmlSerializer.LoadFromXml(openFileDialog.FileNames[0], list.GetType());
+                    spriteFile = (SpriteFile)XmlSerializer.LoadFromXml(openFileDialog.FileNames[0], spriteFile.GetType());
                     if (_imgList == null)
                     {
                         _imgList = new List<ImageInfo>();
                     }
-                    foreach (Sprite s in list.SpriteList) 
+                    foreach (Sprite s in spriteFile.SpriteList)
                     {
-                        Image img = Image.FromFile(s.Path);
+                        Image img = Image.FromFile(folderBrowserDialog.SelectedPath+"\\"+ s.Path);
                         string imgName = Path.GetFileNameWithoutExtension(s.Path);
                         ImageInfo imgInfo = new ImageInfo(img, imgName, s.Path);
                         img.Tag = imgInfo;
                         _imgList.Add(imgInfo);
                         AddPictureBox(img, s.LocationX, s.LocationY);
                     }
+                    txtDir.Text = spriteFile.CssFileName;
+                    txtName.Text = spriteFile.ImageName;
+                    chkBoxPhone.Checked = spriteFile.IsPhone;
                     panelImages.ResumeLayout(false);
                     SetCssText();
                 }
@@ -143,7 +142,8 @@ namespace CssSprite
                 {
                     _imgList = new List<ImageInfo>();
                 }
-                var fileName = openFileDialog.FileNames[0];
+                var fileName = openFileDialog.FileName;
+                
                 if (!IsImgExists(fileName))
                 {
                     Image img = Image.FromFile(fileName);
@@ -347,8 +347,19 @@ namespace CssSprite
             SetCssText();
         }
 
-
+        /// <summary>
+        /// 设置css的文本
+        /// </summary>
         public void SetCssText() {
+            
+            int maxWidth, maxHeight;
+            maxWidth = maxHeight = 0;
+            foreach (PictureBox pb in panelImages.Controls)
+            {
+                maxWidth = Math.Max(maxWidth, pb.Location.X + pb.Image.Width);
+                maxHeight = Math.Max(maxHeight, pb.Location.Y + pb.Image.Height);
+            }
+            _bigSize = new Size(maxWidth, maxHeight);
             var isPhone = chkBoxPhone.Checked;
             var sassStr = "@mixin " + txtName.Text + "{background:url(" + txtDir.Text + "/" + txtName.Text + "." + GetImgExt() + ") no-repeat;" + (isPhone ? "background-size:" + _bigSize.Width / 2 + "px " + _bigSize.Height / 2 + "px" : "") + " }" + Environment.NewLine;
             var cssStr = "." + txtName.Text + "{background:url(" + txtDir.Text + "/" + txtName.Text + "." + GetImgExt() + ")  no-repeat;" + (isPhone ? "background-size:" + _bigSize.Width / 2 + "px " + _bigSize.Height / 2 + "px" : "") + "}" + Environment.NewLine;
@@ -484,7 +495,6 @@ namespace CssSprite
                         minWidth = pb.Location.X;
                         minHeight = pb.Location.Y;
                     } 
-                    
                     minWidth = Math.Min(minWidth, pb.Location.X);
                     minHeight = Math.Min(minHeight, pb.Location.Y);
                 }
@@ -545,22 +555,29 @@ namespace CssSprite
 
                         if (bgColor == Color.Transparent && (format == ImageFormat.Jpeg|| format == ImageFormat.Gif)) g.Clear(Color.White);
                         else g.Clear(bgColor);
+                        
                         SetCssText();
-                        var sprite = new SpriteFile() { CssFileName = txtDir.Text, ImageName = txtName.Text, SpriteList = new List<Sprite>(), IsPhone = chkBoxPhone.Checked };
-                        foreach (PictureBox pb in panelImages.Controls)
-                        {
-                            var img=(ImageInfo) pb.Image.Tag;
-                            Sprite s = new Sprite() { Path = img.FileName, LocationY = pb.Location.Y, LocationX = pb.Location.X };
-                            sprite.SpriteList.Add(s);
-                            g.DrawImage(pb.Image, pb.Location.X, pb.Location.Y, pb.Image.Width, pb.Image.Height);
-                        }
+                        var sprite = new SpriteFile() { CssFileName = txtDir.Text, ImageName = txtName.Text, SpriteList = new List<Sprite>(), IsPhone = chkBoxPhone.Checked };                        
                         try
                         {
-                            XmlSerializer.SaveToXml(folderBrowserDialog.SelectedPath + "//" + txtName.Text + ".sprite", sprite);
+                            foreach (PictureBox pb in panelImages.Controls)
+                            {
+                                var img = (ImageInfo)pb.Image.Tag;
+                                var path = img.FileName;
+                                Sprite s = new Sprite() { LocationY = pb.Location.Y, LocationX = pb.Location.X, Path = Path.GetFileName(path) };
+                                sprite.SpriteList.Add(s);
+                                g.DrawImage(pb.Image, pb.Location.X, pb.Location.Y, pb.Image.Width, pb.Image.Height);
+                                if (Path.GetDirectoryName(path) != folderBrowserDialog.SelectedPath)
+                                {
+                                    File.Copy(path, folderBrowserDialog.SelectedPath + "\\" + Path.GetFileName(path), false);
+                                }
+                            }
+                            XmlSerializer.SaveToXml(folderBrowserDialog.SelectedPath + "\\" + txtName.Text + ".sprite", sprite);
                         }
                         catch (Exception ex)
                         {
-                            MessageBox.Show(ex.Message);
+                            MessageBox.Show(ex.Message,"提示",MessageBoxButtons.OK,MessageBoxIcon.Error);
+                            return;
                         }
                     }
                     try
