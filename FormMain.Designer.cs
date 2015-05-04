@@ -46,13 +46,14 @@
             this.colorDialog = new System.Windows.Forms.ColorDialog();
             this.chkBoxPhone = new System.Windows.Forms.CheckBox();
             this.panelTop = new System.Windows.Forms.Panel();
-            this.panelBottom = new System.Windows.Forms.Panel();
-            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.btnSprite = new System.Windows.Forms.Button();
             this.btn = new System.Windows.Forms.Button();
             this.buttonBrowse = new System.Windows.Forms.Button();
             this.buttonVRange = new System.Windows.Forms.Button();
             this.buttonHRange = new System.Windows.Forms.Button();
             this.buttonMakeBigImageCss = new System.Windows.Forms.Button();
+            this.panelBottom = new System.Windows.Forms.Panel();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panelImages = new System.Windows.Forms.Panel();
             this.panelTop.SuspendLayout();
             this.panelBottom.SuspendLayout();
@@ -61,7 +62,7 @@
             // 
             // openFileDialog
             // 
-            this.openFileDialog.Filter = "所有文件|*.*|Gif文件|*.gif|Jpeg文件|*.jpeg|Jpg文件|*.jpg|Png文件|*.png";
+            this.openFileDialog.Filter = "Png文件|*.png|Jpeg文件|*.jpeg|Jpg文件|*.jpg";
             this.openFileDialog.Multiselect = true;
             // 
             // comboBoxImgType
@@ -212,6 +213,7 @@
             // 
             // panelTop
             // 
+            this.panelTop.Controls.Add(this.btnSprite);
             this.panelTop.Controls.Add(this.btn);
             this.panelTop.Controls.Add(this.buttonBrowse);
             this.panelTop.Controls.Add(this.buttonVRange);
@@ -223,6 +225,98 @@
             this.panelTop.Padding = new System.Windows.Forms.Padding(0, 20, 0, 20);
             this.panelTop.Size = new System.Drawing.Size(839, 54);
             this.panelTop.TabIndex = 21;
+            // 
+            // btnSprite
+            // 
+            this.btnSprite.BackColor = System.Drawing.Color.RoyalBlue;
+            this.btnSprite.FlatAppearance.BorderSize = 0;
+            this.btnSprite.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnSprite.ForeColor = System.Drawing.Color.White;
+            this.btnSprite.Image = global::CssSprite.Properties.Resources.open;
+            this.btnSprite.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnSprite.Location = new System.Drawing.Point(142, 9);
+            this.btnSprite.Name = "btnSprite";
+            this.btnSprite.Size = new System.Drawing.Size(135, 40);
+            this.btnSprite.TabIndex = 22;
+            this.btnSprite.Text = "打开.sprite";
+            this.btnSprite.UseVisualStyleBackColor = false;
+            this.btnSprite.Click += new System.EventHandler(this.btnSprite_Click);
+            // 
+            // btn
+            // 
+            this.btn.BackColor = System.Drawing.Color.White;
+            this.btn.FlatAppearance.BorderSize = 0;
+            this.btn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btn.Image = global::CssSprite.Properties.Resources.question;
+            this.btn.Location = new System.Drawing.Point(780, 10);
+            this.btn.Name = "btn";
+            this.btn.Size = new System.Drawing.Size(55, 40);
+            this.btn.TabIndex = 21;
+            this.btn.UseVisualStyleBackColor = false;
+            this.btn.Click += new System.EventHandler(this.btn_Click);
+            // 
+            // buttonBrowse
+            // 
+            this.buttonBrowse.BackColor = System.Drawing.Color.RoyalBlue;
+            this.buttonBrowse.FlatAppearance.BorderSize = 0;
+            this.buttonBrowse.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonBrowse.ForeColor = System.Drawing.Color.White;
+            this.buttonBrowse.Image = global::CssSprite.Properties.Resources.open;
+            this.buttonBrowse.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.buttonBrowse.Location = new System.Drawing.Point(0, 9);
+            this.buttonBrowse.Name = "buttonBrowse";
+            this.buttonBrowse.Size = new System.Drawing.Size(135, 40);
+            this.buttonBrowse.TabIndex = 1;
+            this.buttonBrowse.Text = "选择多幅图片";
+            this.buttonBrowse.UseVisualStyleBackColor = false;
+            this.buttonBrowse.Click += new System.EventHandler(this.buttonBrowse_Click);
+            // 
+            // buttonVRange
+            // 
+            this.buttonVRange.BackColor = System.Drawing.Color.RoyalBlue;
+            this.buttonVRange.FlatAppearance.BorderSize = 0;
+            this.buttonVRange.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonVRange.ForeColor = System.Drawing.Color.White;
+            this.buttonVRange.Image = global::CssSprite.Properties.Resources.vertical;
+            this.buttonVRange.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.buttonVRange.Location = new System.Drawing.Point(370, 9);
+            this.buttonVRange.Name = "buttonVRange";
+            this.buttonVRange.Size = new System.Drawing.Size(134, 40);
+            this.buttonVRange.TabIndex = 4;
+            this.buttonVRange.Text = "小图竖排";
+            this.buttonVRange.UseVisualStyleBackColor = false;
+            this.buttonVRange.Click += new System.EventHandler(this.ButtonVRange_Click);
+            // 
+            // buttonHRange
+            // 
+            this.buttonHRange.BackColor = System.Drawing.Color.RoyalBlue;
+            this.buttonHRange.FlatAppearance.BorderSize = 0;
+            this.buttonHRange.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonHRange.ForeColor = System.Drawing.Color.White;
+            this.buttonHRange.Image = global::CssSprite.Properties.Resources.horizontal;
+            this.buttonHRange.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.buttonHRange.Location = new System.Drawing.Point(510, 9);
+            this.buttonHRange.Name = "buttonHRange";
+            this.buttonHRange.Size = new System.Drawing.Size(115, 40);
+            this.buttonHRange.TabIndex = 5;
+            this.buttonHRange.Text = "小图横排";
+            this.buttonHRange.UseVisualStyleBackColor = false;
+            this.buttonHRange.Click += new System.EventHandler(this.buttonHRange_Click);
+            // 
+            // buttonMakeBigImageCss
+            // 
+            this.buttonMakeBigImageCss.BackColor = System.Drawing.Color.RoyalBlue;
+            this.buttonMakeBigImageCss.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonMakeBigImageCss.ForeColor = System.Drawing.Color.White;
+            this.buttonMakeBigImageCss.Image = global::CssSprite.Properties.Resources.download;
+            this.buttonMakeBigImageCss.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.buttonMakeBigImageCss.Location = new System.Drawing.Point(631, 9);
+            this.buttonMakeBigImageCss.Name = "buttonMakeBigImageCss";
+            this.buttonMakeBigImageCss.Size = new System.Drawing.Size(145, 40);
+            this.buttonMakeBigImageCss.TabIndex = 9;
+            this.buttonMakeBigImageCss.Text = "生成雪碧图";
+            this.buttonMakeBigImageCss.UseVisualStyleBackColor = false;
+            this.buttonMakeBigImageCss.Click += new System.EventHandler(this.ButtonMakeBigImageCss_Click);
             // 
             // panelBottom
             // 
@@ -261,82 +355,6 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 307F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(845, 545);
             this.tableLayoutPanel1.TabIndex = 0;
-            // 
-            // btn
-            // 
-            this.btn.BackColor = System.Drawing.Color.White;
-            this.btn.FlatAppearance.BorderSize = 0;
-            this.btn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btn.Image = global::CssSprite.Properties.Resources.question;
-            this.btn.Location = new System.Drawing.Point(772, 10);
-            this.btn.Name = "btn";
-            this.btn.Size = new System.Drawing.Size(55, 40);
-            this.btn.TabIndex = 21;
-            this.btn.UseVisualStyleBackColor = false;
-            this.btn.Click += new System.EventHandler(this.btn_Click);
-            // 
-            // buttonBrowse
-            // 
-            this.buttonBrowse.BackColor = System.Drawing.Color.RoyalBlue;
-            this.buttonBrowse.FlatAppearance.BorderSize = 0;
-            this.buttonBrowse.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonBrowse.ForeColor = System.Drawing.Color.White;
-            this.buttonBrowse.Image = global::CssSprite.Properties.Resources.open;
-            this.buttonBrowse.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonBrowse.Location = new System.Drawing.Point(12, 10);
-            this.buttonBrowse.Name = "buttonBrowse";
-            this.buttonBrowse.Size = new System.Drawing.Size(193, 40);
-            this.buttonBrowse.TabIndex = 1;
-            this.buttonBrowse.Text = "选择多幅小背景图片";
-            this.buttonBrowse.UseVisualStyleBackColor = false;
-            this.buttonBrowse.Click += new System.EventHandler(this.buttonBrowse_Click);
-            // 
-            // buttonVRange
-            // 
-            this.buttonVRange.BackColor = System.Drawing.Color.RoyalBlue;
-            this.buttonVRange.FlatAppearance.BorderSize = 0;
-            this.buttonVRange.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonVRange.ForeColor = System.Drawing.Color.White;
-            this.buttonVRange.Image = global::CssSprite.Properties.Resources.vertical;
-            this.buttonVRange.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonVRange.Location = new System.Drawing.Point(277, 10);
-            this.buttonVRange.Name = "buttonVRange";
-            this.buttonVRange.Size = new System.Drawing.Size(134, 40);
-            this.buttonVRange.TabIndex = 4;
-            this.buttonVRange.Text = "小图竖排";
-            this.buttonVRange.UseVisualStyleBackColor = false;
-            this.buttonVRange.Click += new System.EventHandler(this.ButtonVRange_Click);
-            // 
-            // buttonHRange
-            // 
-            this.buttonHRange.BackColor = System.Drawing.Color.RoyalBlue;
-            this.buttonHRange.FlatAppearance.BorderSize = 0;
-            this.buttonHRange.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonHRange.ForeColor = System.Drawing.Color.White;
-            this.buttonHRange.Image = global::CssSprite.Properties.Resources.horizontal;
-            this.buttonHRange.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonHRange.Location = new System.Drawing.Point(437, 10);
-            this.buttonHRange.Name = "buttonHRange";
-            this.buttonHRange.Size = new System.Drawing.Size(134, 40);
-            this.buttonHRange.TabIndex = 5;
-            this.buttonHRange.Text = "小图横排";
-            this.buttonHRange.UseVisualStyleBackColor = false;
-            this.buttonHRange.Click += new System.EventHandler(this.buttonHRange_Click);
-            // 
-            // buttonMakeBigImageCss
-            // 
-            this.buttonMakeBigImageCss.BackColor = System.Drawing.Color.RoyalBlue;
-            this.buttonMakeBigImageCss.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonMakeBigImageCss.ForeColor = System.Drawing.Color.White;
-            this.buttonMakeBigImageCss.Image = global::CssSprite.Properties.Resources.download;
-            this.buttonMakeBigImageCss.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonMakeBigImageCss.Location = new System.Drawing.Point(595, 10);
-            this.buttonMakeBigImageCss.Name = "buttonMakeBigImageCss";
-            this.buttonMakeBigImageCss.Size = new System.Drawing.Size(171, 40);
-            this.buttonMakeBigImageCss.TabIndex = 9;
-            this.buttonMakeBigImageCss.Text = "生成雪碧图";
-            this.buttonMakeBigImageCss.UseVisualStyleBackColor = false;
-            this.buttonMakeBigImageCss.Click += new System.EventHandler(this.ButtonMakeBigImageCss_Click);
             // 
             // panelImages
             // 
@@ -396,6 +414,7 @@
         private System.Windows.Forms.Panel panelBottom;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Button btn;
+        private System.Windows.Forms.Button btnSprite;
     }
 }
 

@@ -11,7 +11,6 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Globalization;
 using System.Drawing.Drawing2D;
-//using ImageManipulation;
 using System.Collections;
 
 namespace CssSprite
@@ -73,21 +72,12 @@ namespace CssSprite
 
         private void buttonBrowse_Click(object sender, EventArgs e)
         {
-            if (_imgList != null && _imgList.Count > 0) {
-                DialogResult queryDr = MessageBox.Show("确实要重新选择图片吗？重新选择图片，当前的图片布局将丢失。", "询问", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                if (queryDr == DialogResult.Yes)
-                {
-                    _imgList.Clear();
-                    panelImages.Controls.Clear();
-                }
-                else {
-                    return;
-                }
+            if (!OpenFile(false)) {
+                return;
             }
             DialogResult dr = openFileDialog.ShowDialog();
             if (DialogResult.OK == dr && openFileDialog.FileNames.Length > 0)
             {
-                
                 if (!AssertFiles())
                 {
                     return;
@@ -98,10 +88,85 @@ namespace CssSprite
                 folderBrowserDialog.SelectedPath = dialogFile;
                 LoadImages(openFileDialog.FileNames);
                 ButtonVRange_Click(null, EventArgs.Empty);
-                buttonBrowse.Text = "重新选择图片...";
             }
         }
 
+        private void btnSprite_Click(object sender, EventArgs e)
+        {
+            if (!OpenFile(true))
+            {
+                return;
+            }
+            DialogResult dr = openFileDialog.ShowDialog();
+            if (DialogResult.OK == dr && openFileDialog.FileNames.Length > 0)
+            {
+                dialogFile = openFileDialog.FileName;
+                var index = dialogFile.LastIndexOf("\\");
+                dialogFile = dialogFile.Substring(0, index);
+                folderBrowserDialog.SelectedPath = dialogFile;
+
+                var list = new List<Sprite>();
+                try
+                {
+                    list = (List<Sprite>)XmlSerializer.LoadFromXml(openFileDialog.FileNames[0], list.GetType());
+                    if (_imgList == null)
+                    {
+                        _imgList = new List<ImageInfo>();
+                    }
+                    foreach (Sprite s in list) 
+                    {
+                        Image img = Image.FromFile(s.Path);
+                        string imgName = Path.GetFileNameWithoutExtension(s.Path);
+                        ImageInfo imgInfo = new ImageInfo(img, imgName, s.Path);
+                        img.Tag = imgInfo;
+                        _imgList.Add(imgInfo);
+                        AddPictureBox(img, s.LocationX, s.LocationY);
+                    }
+                    panelImages.ResumeLayout(false);
+                    SetCssText();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message + Environment.NewLine + ".sprite文件被损坏，无法打开！");
+                }
+            }
+        }
+
+        /// <summary>
+        /// 画布以及对话框初始化
+        /// </summary>
+        /// <param name="spriteFile"></param>
+        private bool OpenFile(bool spriteFile) 
+        {
+            if (_imgList != null && _imgList.Count > 0)
+            {
+                DialogResult queryDr = MessageBox.Show("确实要重新选择图片吗？重新选择图片，当前的图片布局将丢失。", "询问", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (queryDr == DialogResult.Yes)
+                {
+                    _imgList.Clear();
+                    panelImages.Controls.Clear();
+                }
+                else
+                {
+                    return false ;
+                }
+            }
+            if (spriteFile)
+            {
+                openFileDialog.Filter = "css sprite文件|*.sprite";
+                openFileDialog.Multiselect = false;
+            }
+            else {
+                openFileDialog.Filter = "Png文件|*.png|Jpeg文件|*.jpeg|Jpg文件|*.jpg";
+                openFileDialog.Multiselect = true;
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// 加载图片进画布
+        /// </summary>
+        /// <param name="imageFileNames"></param>
         private void LoadImages(string[] imageFileNames)
         {
             if (_imgList == null)
@@ -117,9 +182,9 @@ namespace CssSprite
                 Image img = Image.FromFile(fileName);
                 string imgName = Path.GetFileNameWithoutExtension(fileName);
                 ImageInfo imgInfo = new ImageInfo(img, imgName, fileName);
+                img.Tag = imgInfo;
                 _imgList.Add(imgInfo);
             }
-
             _imgList.Sort(ImageComparison);
         }
 
@@ -128,37 +193,16 @@ namespace CssSprite
             return i1.Image.Width > i2.Image.Width ? 1 : (i1.Image.Width == i2.Image.Width ? 0 : -1);
         }
 
+        /// <summary>
+        /// 验证是否是多个文件
+        /// </summary>
+        /// <returns></returns>
         private bool AssertFiles()
         {
             string[] files = openFileDialog.FileNames;
-            if (files == null || files.Length < 2)
+            if (files == null || (openFileDialog.Multiselect ? files.Length < 2 : files.Length <0))
             {
                 MessageBox.Show("请选择多个图片文件。");
-                return false;
-            }
-            return VerifyFileType(files);
-        }
-
-
-        private bool VerifyFileType(string[] files)
-        {
-            bool isFileTypeOk = true;
-            foreach (string file in files)
-            {
-                string ext = Path.GetExtension(file).ToLower();
-                if (ext == ".gif" || ext == ".png" || ext == ".jpg" || ext == ".jpeg")
-                {
-
-                }
-                else
-                {
-                    isFileTypeOk = false;
-                    break;
-                }
-            }
-            if (!isFileTypeOk)
-            {
-                MessageBox.Show("您选择的文件中有非图片文件，请重新选择。");
                 return false;
             }
             return true;
@@ -187,20 +231,7 @@ namespace CssSprite
         /// <returns></returns>
         string GetSassCss(Image img, int left, int top) 
         {
-            ImageInfo imgInfo = null;
-            foreach (ImageInfo ii in _imgList)
-            {
-                if (ii.Image == img)
-                {
-                    imgInfo = ii;
-                    break;
-                }
-            }
-            if (imgInfo == null)
-            {
-                return string.Empty;
-            }
-            
+            ImageInfo imgInfo = (ImageInfo)img.Tag;
             var isPhone = chkBoxPhone.Checked;
             if (isPhone) {
                 left = left / 2;
@@ -223,19 +254,7 @@ namespace CssSprite
         /// <returns></returns>
         string GetCss(Image img, int left, int top)
         {
-            ImageInfo imgInfo = null;
-            foreach (ImageInfo ii in _imgList)
-            {
-                if (ii.Image == img)
-                {
-                    imgInfo = ii;
-                    break;
-                }
-            }
-            if (imgInfo == null)
-            {
-                return string.Empty;
-            }
+            ImageInfo imgInfo = (ImageInfo)img.Tag;
             var isPhone = chkBoxPhone.Checked;
             if (isPhone)
             {
@@ -280,9 +299,7 @@ namespace CssSprite
                 _bigSize.Width = Math.Max(_bigSize.Width, img.Width);
             }
             panelImages.ResumeLayout(false);
-
             SetCssText();
-
         }
 
 
@@ -490,15 +507,36 @@ namespace CssSprite
                         if (bgColor == Color.Transparent && (format == ImageFormat.Jpeg|| format == ImageFormat.Gif)) g.Clear(Color.White);
                         else g.Clear(bgColor);
                         SetCssText();
+                        var sproteList = new List<Sprite>();
                         foreach (PictureBox pb in panelImages.Controls)
                         {
+                            var img=(ImageInfo) pb.Image.Tag;
+                            Sprite s = new Sprite() { Path = img.FileName, LocationY = pb.Location.Y, LocationX = pb.Location.X };
+                            sproteList.Add(s);
                             g.DrawImage(pb.Image, pb.Location.X, pb.Location.Y, pb.Image.Width, pb.Image.Height);
                         }
+                        try
+                        {
+                            XmlSerializer.SaveToXml(folderBrowserDialog.SelectedPath + "\\" + txtName.Text + ".sprite", sproteList);
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.Message);
+                        }
                     }
-                    //保存图片
-                    bigImg.Save(imgPath, format);
+                    try
+                    {
+                        //保存图片
+                        bigImg.Save(imgPath, format);
+                        MessageBox.Show("图片生成成功！");
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message+"图片生成失败，被覆盖文件可能被其他程序占用，请换个文件名！");
+                    }
                 }
-                MessageBox.Show("图片生成成功！");
+               
+                
             }
         }
 
@@ -629,8 +667,6 @@ namespace CssSprite
                 Image img = ii.Image;
                 AddPictureBox(img, left, top);
                 left += img.Width;
-
-
                 _bigSize.Width += img.Width;
                 _bigSize.Height = Math.Max(_bigSize.Height, img.Height);
             }
