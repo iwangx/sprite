@@ -285,6 +285,68 @@ namespace CssSprite
             return "png";
         }
 
+        
+
+        
+        //小图横排点击
+        private void ButtonVRange_Click(object sender, EventArgs e)
+        {
+            if (!AssertFiles()) return;
+            panelImages.Controls.Clear();
+            int left = 0;
+            int top = 0;
+            int currentHeight = 0;
+            foreach (ImageInfo ii in _imgList)
+            {
+                Image img = ii.Image;
+                left = 0;
+                top = currentHeight;
+
+                AddPictureBox(img, left, top);
+                currentHeight += img.Height;
+            }
+            panelImages.ResumeLayout(false);
+            SetCssText();
+        }
+
+        /// <summary>
+        /// 设置css的文本
+        /// </summary>
+        public void SetCssText() {
+
+            int maxWidth, maxHeight, minHeight, minWidth;
+            maxWidth = maxHeight = minHeight = minWidth = 0;
+
+            //把所有元素按照0，0点为标准，通过最小向上距离和向左距离平移，获取最大距离
+            foreach (PictureBox pb in panelImages.Controls)
+            {
+                if (panelImages.Controls.GetChildIndex(pb) == 0)
+                {
+                    minWidth = pb.Location.X;
+                    minHeight = pb.Location.Y;
+                }
+                minWidth = Math.Min(minWidth, pb.Location.X);
+                minHeight = Math.Min(minHeight, pb.Location.Y);
+            }
+            foreach (PictureBox pb in panelImages.Controls)
+            {
+                maxWidth = Math.Max(maxWidth, pb.Location.X + pb.Image.Width);
+                maxHeight = Math.Max(maxHeight, pb.Location.Y + pb.Image.Height);
+            }
+
+            _bigSize = new Size(maxWidth, maxHeight);
+            var isPhone = chkBoxPhone.Checked;
+            var sassStr = "@mixin " + txtName.Text + "{background:url(" + txtDir.Text + "/" + txtName.Text + "." + GetImgExt() + ") no-repeat;" + (isPhone ? "background-size:" + _bigSize.Width / 2 + "px " + _bigSize.Height / 2 + "px" : "") + " }" + Environment.NewLine;
+            var cssStr = "." + txtName.Text + "{background:url(" + txtDir.Text + "/" + txtName.Text + "." + GetImgExt() + ")  no-repeat;" + (isPhone ? "background-size:" + _bigSize.Width / 2 + "px " + _bigSize.Height / 2 + "px" : "") + "}" + Environment.NewLine;
+            foreach (PictureBox pb in panelImages.Controls)
+            {
+                sassStr += GetSassCss(pb.Image, pb.Left - minWidth, pb.Top-minHeight);
+                cssStr += GetCss(pb.Image, pb.Left - minWidth, pb.Top - minHeight);
+            }
+            txtSass.Text = sassStr;
+            txtCss.Text = cssStr;
+        }
+
         /// <summary>
         /// 得到sass代码
         /// </summary>
@@ -292,11 +354,12 @@ namespace CssSprite
         /// <param name="left">左边距离</param>
         /// <param name="top">右边距离</param>
         /// <returns></returns>
-        string GetSassCss(Image img, int left, int top) 
+        string GetSassCss(Image img, int left, int top)
         {
             ImageInfo imgInfo = (ImageInfo)img.Tag;
             var isPhone = chkBoxPhone.Checked;
-            if (isPhone) {
+            if (isPhone)
+            {
                 left = left / 2;
                 top = top / 2;
             }
@@ -338,53 +401,6 @@ namespace CssSprite
                 return "_" + imgName;
             }
             return imgName;
-        }
-
-        
-        //小图横排点击
-        private void ButtonVRange_Click(object sender, EventArgs e)
-        {
-            if (!AssertFiles()) return;
-            panelImages.Controls.Clear();
-            int left = 0;
-            int top = 0;
-            int currentHeight = 0;
-            foreach (ImageInfo ii in _imgList)
-            {
-                Image img = ii.Image;
-                left = 0;
-                top = currentHeight;
-
-                AddPictureBox(img, left, top);
-                currentHeight += img.Height;
-            }
-            panelImages.ResumeLayout(false);
-            SetCssText();
-        }
-
-        /// <summary>
-        /// 设置css的文本
-        /// </summary>
-        public void SetCssText() {
-            
-            int maxWidth, maxHeight;
-            maxWidth = maxHeight = 0;
-            foreach (PictureBox pb in panelImages.Controls)
-            {
-                maxWidth = Math.Max(maxWidth, pb.Location.X + pb.Image.Width);
-                maxHeight = Math.Max(maxHeight, pb.Location.Y + pb.Image.Height);
-            }
-            _bigSize = new Size(maxWidth, maxHeight);
-            var isPhone = chkBoxPhone.Checked;
-            var sassStr = "@mixin " + txtName.Text + "{background:url(" + txtDir.Text + "/" + txtName.Text + "." + GetImgExt() + ") no-repeat;" + (isPhone ? "background-size:" + _bigSize.Width / 2 + "px " + _bigSize.Height / 2 + "px" : "") + " }" + Environment.NewLine;
-            var cssStr = "." + txtName.Text + "{background:url(" + txtDir.Text + "/" + txtName.Text + "." + GetImgExt() + ")  no-repeat;" + (isPhone ? "background-size:" + _bigSize.Width / 2 + "px " + _bigSize.Height / 2 + "px" : "") + "}" + Environment.NewLine;
-            foreach (PictureBox pb in panelImages.Controls)
-            {
-                sassStr += GetSassCss(pb.Image, pb.Left, pb.Top);
-                cssStr += GetCss(pb.Image, pb.Left, pb.Top);
-            }
-            txtSass.Text = sassStr;
-            txtCss.Text = cssStr;
         }
 
         public string GetImgName(Image img)
@@ -517,22 +533,12 @@ namespace CssSprite
                 //把所有元素按照0，0点为标准，通过最小向上距离和向左距离平移，获取最大距离
                 foreach (PictureBox pb in panelImages.Controls)
                 {
-                    var point = new Point(pb.Location.X, pb.Location.Y);
-                    if (minHeight != 0)
-                    {
-                        point.Y = pb.Location.Y - minHeight;
-                    }
-                    if (minWidth != 0)
-                    {
-                        point.X = pb.Location.X - minWidth;
-                    }
-                    pb.Location = point;
                     maxWidth = Math.Max(maxWidth, pb.Location.X + pb.Image.Width);
                     maxHeight = Math.Max(maxHeight, pb.Location.Y + pb.Image.Height);
                 }
                 Size imgSize = new Size(maxWidth, maxHeight);
                 var codeMime = string.Empty;
-                using (Bitmap bigImg = new Bitmap(imgSize.Width, imgSize.Height, PixelFormat.Format32bppArgb))
+                using (Bitmap bigImg = new Bitmap(imgSize.Width-minWidth, imgSize.Height-minHeight, PixelFormat.Format32bppArgb))
                 {
                     string imgType = GetImgExt();
                     ImageFormat format = ImageFormat.Png;
@@ -581,7 +587,7 @@ namespace CssSprite
                                 var path = img.FileName;
                                 Sprite s = new Sprite() { LocationY = pb.Location.Y, LocationX = pb.Location.X, Path = Path.GetFileName(path) };
                                 sprite.SpriteList.Add(s);
-                                g.DrawImage(pb.Image, pb.Location.X, pb.Location.Y, pb.Image.Width, pb.Image.Height);
+                                g.DrawImage(pb.Image, pb.Location.X - minWidth, pb.Location.Y - minHeight, pb.Image.Width, pb.Image.Height);
                                 if (Path.GetDirectoryName(path) != folderBrowserDialog.SelectedPath)
                                 {
                                     File.Copy(path, folderBrowserDialog.SelectedPath + "\\" + Path.GetFileName(path), false);
