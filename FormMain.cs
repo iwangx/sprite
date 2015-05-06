@@ -41,7 +41,49 @@ namespace CssSprite
             resize();
             panelImages.MouseWheel += panelImages_MouseWheel;
             panelImages.MouseHover += panelImages_MouseHover;
+            panelImages.MouseDown += panelImages_MouseDown;
+            panelImages.MouseMove += panelImages_MouseMove;
         }
+
+        
+
+        /// <summary>
+        /// 鼠标的初始位置
+        /// </summary>
+        Point _panelPoint;
+        /// <summary>
+        /// 是否在拖动
+        /// </summary>
+        bool _isSelect = false;
+
+        Color color ;
+        void panelImages_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                _panelPoint = new Point(e.X, e.Y);
+                _isSelect = true;
+            }
+            else {
+                _isSelect = false;
+            }
+        }
+
+        void panelImages_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (_isSelect) 
+            {   
+                Graphics g = panelImages.CreateGraphics();
+                //g.Clear();
+                panelImages.ResumeLayout(false);
+                panelImages.Refresh();
+                var pen=new Pen(Color.Blue);
+                g.DrawRectangle(pen, _panelPoint.X, _panelPoint.Y, e.X - _panelPoint.X, e.Y - _panelPoint.Y);
+                
+            }
+        }
+
+
 
         void panelImages_MouseHover(object sender, EventArgs e)
         {

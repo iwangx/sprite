@@ -1,4 +1,4 @@
-# css sprite
+﻿# css sprite
 
         css雪碧图简单制作工具
 
@@ -12,7 +12,7 @@
 
 # CSDN下载地址(多支持下吧)
 
-http://download.csdn.net/detail/wx247919365/8646289
+http://download.csdn.net/detail/wx247919365/8660503
 
 #使用步骤
 ####1.用ps或者dw把需要的图片切下来
@@ -47,8 +47,7 @@ http://download.csdn.net/detail/wx247919365/8646289
 
 ####6.保存雪碧图
         点击“生成雪碧图”按钮，程序会默认选中你在第3步的时候打开图片的地址
+
         然后点击确定后生成雪碧图。
 
 		生成的同时会生成.sprite文件
-
-
