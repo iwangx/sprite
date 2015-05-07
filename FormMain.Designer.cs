@@ -57,9 +57,11 @@
             this.panelBottom = new System.Windows.Forms.Panel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panelImages = new System.Windows.Forms.Panel();
+            this.panel1 = new System.Windows.Forms.Panel();
             this.panelTop.SuspendLayout();
             this.panelBottom.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // openFileDialog
@@ -373,9 +375,9 @@
             // 
             this.tableLayoutPanel1.ColumnCount = 1;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.Controls.Add(this.panel1, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.panelTop, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.panelBottom, 0, 2);
-            this.tableLayoutPanel1.Controls.Add(this.panelImages, 0, 1);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -390,13 +392,22 @@
             // 
             this.panelImages.AutoScroll = true;
             this.panelImages.BackColor = System.Drawing.Color.Transparent;
-            this.panelImages.BackgroundImage = global::CssSprite.Properties.Resources.QQ截图201504271504082;
             this.panelImages.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panelImages.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelImages.Location = new System.Drawing.Point(3, 63);
+            this.panelImages.Location = new System.Drawing.Point(0, 0);
             this.panelImages.Name = "panelImages";
             this.panelImages.Size = new System.Drawing.Size(1002, 223);
             this.panelImages.TabIndex = 0;
+            // 
+            // panel1
+            // 
+            this.panel1.BackgroundImage = global::CssSprite.Properties.Resources.QQ截图201504271504082;
+            this.panel1.Controls.Add(this.panelImages);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(3, 63);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(1002, 223);
+            this.panel1.TabIndex = 0;
             // 
             // FormMain
             // 
@@ -413,6 +424,7 @@
             this.panelBottom.ResumeLayout(false);
             this.panelBottom.PerformLayout();
             this.tableLayoutPanel1.ResumeLayout(false);
+            this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -447,6 +459,7 @@
         private System.Windows.Forms.Button btnSprite;
         private System.Windows.Forms.Button btnDelete;
         private System.Windows.Forms.Button btnAdd;
+        private System.Windows.Forms.Panel panel1;
     }
 }
 

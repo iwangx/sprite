@@ -43,10 +43,11 @@ namespace CssSprite
             panelImages.MouseHover += panelImages_MouseHover;
             panelImages.MouseDown += panelImages_MouseDown;
             panelImages.MouseMove += panelImages_MouseMove;
+            panelImages.MouseUp += panelImages_MouseUp;
+            //this.SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer, true);
         }
 
-        
-
+  
         /// <summary>
         /// 鼠标的初始位置
         /// </summary>
@@ -55,32 +56,119 @@ namespace CssSprite
         /// 是否在拖动
         /// </summary>
         bool _isSelect = false;
-
-        Color color ;
+        /// <summary>
+        /// 画笔
+        /// </summary>
+        Graphics g;
+        /// <summary>
+        /// 颜色笔
+        /// </summary>
+        Pen pen;
+        /// <summary>
+        /// 区域
+        /// </summary>
+        Area area;
+        /// <summary>
+        /// 零时装载选中图片列表
+        /// </summary>
+        List<PictureBox> list;
         void panelImages_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
             {
+                list = null;
+                pen = new Pen(Color.Blue);
+                g = panelImages.CreateGraphics();
                 _panelPoint = new Point(e.X, e.Y);
                 _isSelect = true;
+                area = new Area();
             }
-            else {
+            else
+            {
                 _isSelect = false;
             }
         }
-
+        
         void panelImages_MouseMove(object sender, MouseEventArgs e)
         {
-            if (_isSelect) 
-            {   
-                Graphics g = panelImages.CreateGraphics();
-                //g.Clear();
-                panelImages.ResumeLayout(false);
+            if (_isSelect && list == null)
+            {
                 panelImages.Refresh();
-                var pen=new Pen(Color.Blue);
-                g.DrawRectangle(pen, _panelPoint.X, _panelPoint.Y, e.X - _panelPoint.X, e.Y - _panelPoint.Y);
+                if (e.X > _panelPoint.X && e.Y > _panelPoint.Y)
+                {
+                    area.ZeroPoint = new Point(_panelPoint.X, _panelPoint.Y);
+                    area.Height = e.Y - _panelPoint.Y;
+                    area.Width = e.X - _panelPoint.X;
+                }
+                else if (e.X < _panelPoint.X && e.Y < _panelPoint.Y)
+                {
+                    area.ZeroPoint = new Point(e.X, e.Y);
+                    area.Height = _panelPoint.Y - e.Y;
+                    area.Width = _panelPoint.X - e.X;
+                }
+                else if (e.X < _panelPoint.X && e.Y > _panelPoint.Y)
+                {
+                    area.ZeroPoint = new Point(e.X, _panelPoint.Y);
+                    area.Width = _panelPoint.X - e.X;
+                    area.Height = e.Y - _panelPoint.Y;
+                }
+                else
+                {
+                    area.ZeroPoint = new Point(_panelPoint.X, e.Y);
+                    area.Width = e.X - _panelPoint.X;
+                    area.Height = _panelPoint.Y - e.Y;
+                }
+                g.DrawRectangle(pen, area.ZeroPoint.X, area.ZeroPoint.Y, area.Width, area.Height);
+            }
+            else if (_isSelect && list != null)
+            {
                 
             }
+        }
+
+        void panelImages_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (_isSelect) 
+            {
+                _isSelect = false;
+                list = new List<PictureBox>();
+                foreach(PictureBox pb in panelImages.Controls)
+                {
+                    if (pb.Location.X > area.ZeroPoint.X && pb.Location.Y > area.ZeroPoint.Y &&
+                        pb.Location.X + pb.Width < area.ZeroPoint.X + area.Width &&
+                        pb.Location.Y + pb.Height < area.ZeroPoint.Y + area.Height
+                        ) 
+                    {
+                        list.Add(pb);
+                    }
+                }
+                var size = GetEdgeSize(list);
+                panelImages.Refresh();
+                g.DrawRectangle(pen, size.MinWidth, size.MinHeight, size.MaxWidth - size.MinWidth, size.MaxHeight - size.MinHeight);
+            }
+        }
+
+        void panelImages_Paint(object sender, PaintEventArgs e)
+        {
+            Console.WriteLine("panelImages_Paint");
+        }
+
+        private EdgeSize GetEdgeSize(List<PictureBox> list)
+        {
+            var size = new EdgeSize();
+            foreach (PictureBox pb in list)
+            {
+                if (list.IndexOf(pb) == 0)
+                {
+                    size.MinWidth = pb.Location.X;
+                    size.MinHeight = pb.Location.Y;
+                }
+                size.MinWidth = Math.Min(size.MinWidth, pb.Location.X);
+                size.MinHeight = Math.Min(size.MinHeight, pb.Location.Y);
+                size.MaxWidth = Math.Max(size.MaxWidth, pb.Location.X + pb.Image.Width);
+                size.MaxHeight = Math.Max(size.MaxHeight, pb.Location.Y + pb.Image.Height);
+            }
+            return size;
         }
 
 
@@ -111,6 +199,8 @@ namespace CssSprite
         {
             txtCss.Width = txtSass.Width = this.Width-20;
         }
+
+        
 
 
         private void buttonBrowse_Click(object sender, EventArgs e)
@@ -472,12 +562,39 @@ namespace CssSprite
             pb.BorderStyle =BorderStyle.FixedSingle ;
             pb.Name = "pb_" + left + "_" + top;
             pb.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            //pb.Click += pb_Click;
+            pb.Click += pb_Click;
             pb.MouseDown += pb_MouseDown;
             pb.MouseMove += pb_MouseMove;
             pb.MouseUp += pb_MouseUp;
+            //pb.Paint += pb_Paint;
             panelImages.Controls.Add(pb);
             pb.Show();
+        }
+
+        void pb_Click(object sender, EventArgs e)
+        {
+            var p = (PictureBox)sender;
+            p.Tag="1";
+            p.Refresh();
+            _selectedPicture = p;
+        }
+
+        void pb_Paint(object sender, PaintEventArgs e)
+        {
+            PictureBox p = (PictureBox)sender;
+            if (p.Tag!=null && p.Tag.ToString() == "1") 
+            {
+                Pen pp = new Pen(Color.Blue);
+                e.Graphics.DrawRectangle(pp, e.ClipRectangle.X, e.ClipRectangle.Y, e.ClipRectangle.X + e.ClipRectangle.Width - 1, e.ClipRectangle.Y + e.ClipRectangle.Height - 1);
+                foreach (PictureBox pb in panelImages.Controls)
+                {
+                    if (pb != p)
+                    {
+                        pb.Tag = null;
+                        pb.Refresh();
+                    }
+                }
+            }
         }
 
         #region 拖动
@@ -497,8 +614,9 @@ namespace CssSprite
                 int x = Math.Max(0, pb.Location.X + p.X - _dragStartLocation.X);
                 int y = Math.Max(0, pb.Location.Y + p.Y - _dragStartLocation.Y);
                 pb.Location = new Point(x, y);
-                panelImages.ResumeLayout(false);
                 SetCssText();
+                panelImages.ResumeLayout(false);
+                panelImages.Refresh();
             }
         }
 
@@ -506,7 +624,7 @@ namespace CssSprite
         {
             if (e.Button == MouseButtons.Left)
             {
-                _selectedPicture = (PictureBox)sender;
+                
                 _isDragged = true;
                 _dragStartLocation = new Point(e.X, e.Y);
             }
@@ -518,16 +636,6 @@ namespace CssSprite
 
 
         #endregion
-
-        void pb_Click(object sender, EventArgs e)
-        {
-            PictureBox pb = (PictureBox)sender;
-            if (_selectedPicture != null)
-            {
-                _selectedPicture.BorderStyle = BorderStyle.None;
-            }
-            pb.BorderStyle = BorderStyle.FixedSingle;
-        }
 
         private void ButtonMakeBigImageCss_Click(object sender, EventArgs e)
         {
@@ -560,21 +668,18 @@ namespace CssSprite
 
                 int maxWidth,maxHeight,minWidth,minHeight;
                 maxWidth = maxHeight = minWidth = minHeight = 0;
-                //循环获取距离左边和上边最小距离
-                foreach (PictureBox pb in panelImages.Controls)
-                {
-                    if (panelImages.Controls.GetChildIndex(pb)==0) 
-                    {
-                        minWidth = pb.Location.X;
-                        minHeight = pb.Location.Y;
-                    } 
-                    minWidth = Math.Min(minWidth, pb.Location.X);
-                    minHeight = Math.Min(minHeight, pb.Location.Y);
-                }
                 Color bgColor = GetBgColor();
+                //循环获取距离左边和上边最小距离
                 //把所有元素按照0，0点为标准，通过最小向上距离和向左距离平移，获取最大距离
                 foreach (PictureBox pb in panelImages.Controls)
                 {
+                    if (panelImages.Controls.GetChildIndex(pb) == 0)
+                    {
+                        minWidth = pb.Location.X;
+                        minHeight = pb.Location.Y;
+                    }
+                    minWidth = Math.Min(minWidth, pb.Location.X);
+                    minHeight = Math.Min(minHeight, pb.Location.Y);
                     maxWidth = Math.Max(maxWidth, pb.Location.X + pb.Image.Width);
                     maxHeight = Math.Max(maxHeight, pb.Location.Y + pb.Image.Height);
                 }

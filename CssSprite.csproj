@@ -70,6 +70,8 @@
     <Compile Include="AboutUs.Designer.cs">
       <DependentUpon>AboutUs.cs</DependentUpon>
     </Compile>
+    <Compile Include="Area.cs" />
+    <Compile Include="EdgeSize.cs" />
     <Compile Include="FormMain.cs">
       <SubType>Form</SubType>
     </Compile>
