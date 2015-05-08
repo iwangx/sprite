@@ -33,8 +33,6 @@
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.comboBoxImgType = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.comboBoxBgColor = new System.Windows.Forms.ComboBox();
             this.txtSass = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.txtDir = new System.Windows.Forms.TextBox();
@@ -82,7 +80,7 @@
             "Png",
             "Jpg",
             "Jpeg"});
-            this.comboBoxImgType.Location = new System.Drawing.Point(72, 225);
+            this.comboBoxImgType.Location = new System.Drawing.Point(186, 60);
             this.comboBoxImgType.Name = "comboBoxImgType";
             this.comboBoxImgType.Size = new System.Drawing.Size(121, 20);
             this.comboBoxImgType.TabIndex = 7;
@@ -91,30 +89,11 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(2, 228);
+            this.label1.Location = new System.Drawing.Point(116, 63);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(65, 12);
             this.label1.TabIndex = 3;
             this.label1.Text = "大图类型：";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(224, 230);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(53, 12);
-            this.label3.TabIndex = 3;
-            this.label3.Text = "背景色：";
-            // 
-            // comboBoxBgColor
-            // 
-            this.comboBoxBgColor.FormattingEnabled = true;
-            this.comboBoxBgColor.Location = new System.Drawing.Point(283, 225);
-            this.comboBoxBgColor.Name = "comboBoxBgColor";
-            this.comboBoxBgColor.Size = new System.Drawing.Size(121, 20);
-            this.comboBoxBgColor.TabIndex = 8;
-            this.comboBoxBgColor.Text = "Transparent";
-            this.comboBoxBgColor.Leave += new System.EventHandler(this.comboBoxBgColor_Changed);
             // 
             // txtSass
             // 
@@ -221,16 +200,14 @@
             this.panelBottom.Controls.Add(this.txtDir);
             this.panelBottom.Controls.Add(this.chkBoxPhone);
             this.panelBottom.Controls.Add(this.label1);
-            this.panelBottom.Controls.Add(this.label3);
             this.panelBottom.Controls.Add(this.comboBoxImgType);
             this.panelBottom.Controls.Add(this.txtName);
-            this.panelBottom.Controls.Add(this.comboBoxBgColor);
             this.panelBottom.Controls.Add(this.label5);
             this.panelBottom.Controls.Add(this.label2);
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelBottom.Location = new System.Drawing.Point(3, 292);
+            this.panelBottom.Location = new System.Drawing.Point(3, 320);
             this.panelBottom.Name = "panelBottom";
-            this.panelBottom.Size = new System.Drawing.Size(1002, 250);
+            this.panelBottom.Size = new System.Drawing.Size(1002, 222);
             this.panelBottom.TabIndex = 0;
             // 
             // tableLayoutPanel1
@@ -246,7 +223,7 @@
             this.tableLayoutPanel1.RowCount = 3;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 60F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 256F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 228F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(1008, 545);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
@@ -289,7 +266,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(3, 63);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1002, 223);
+            this.panel1.Size = new System.Drawing.Size(1002, 251);
             this.panel1.TabIndex = 0;
             // 
             // panelImages
@@ -300,7 +277,7 @@
             this.panelImages.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelImages.Location = new System.Drawing.Point(0, 0);
             this.panelImages.Name = "panelImages";
-            this.panelImages.Size = new System.Drawing.Size(1002, 223);
+            this.panelImages.Size = new System.Drawing.Size(1002, 251);
             this.panelImages.TabIndex = 0;
             // 
             // btnUpdate
@@ -471,8 +448,6 @@
         private System.Windows.Forms.Button buttonVRange;
         private System.Windows.Forms.ComboBox comboBoxImgType;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.ComboBox comboBoxBgColor;
         private System.Windows.Forms.TextBox txtSass;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox txtDir;

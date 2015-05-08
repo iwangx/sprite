@@ -236,8 +236,7 @@ namespace CssSprite
 
         private void FormMain_Load(object sender, EventArgs e)
         {
-            comboBoxBgColor.DataSource = Enum.GetNames(typeof(KnownColor));
-            comboBoxBgColor.Text = "Transparent";
+            
         }
 
         private void buttonBrowse_Click(object sender, EventArgs e)
@@ -705,7 +704,6 @@ namespace CssSprite
 
                 int maxWidth,maxHeight,minWidth,minHeight;
                 maxWidth = maxHeight = minWidth = minHeight = 0;
-                Color bgColor = GetBgColor();
                 //循环获取距离左边和上边最小距离
                 //把所有元素按照0，0点为标准，通过最小向上距离和向左距离平移，获取最大距离
                 foreach (PictureBox pb in panelImages.Controls)
@@ -758,8 +756,8 @@ namespace CssSprite
                         g.SmoothingMode = SmoothingMode.HighQuality;
                         g.InterpolationMode = InterpolationMode.HighQualityBicubic;
 
-                        if (bgColor == Color.Transparent && (format == ImageFormat.Jpeg|| format == ImageFormat.Gif)) g.Clear(Color.White);
-                        else g.Clear(bgColor);
+                        if ((format == ImageFormat.Jpeg)) g.Clear(Color.White);
+                        else g.Clear(Color.Transparent);
                         
                         SetCssText();
                         var sprite = new SpriteFile() { CssFileName = txtDir.Text, ImageName = txtName.Text, SpriteList = new List<Sprite>(), IsPhone = chkBoxPhone.Checked };                        
@@ -822,60 +820,6 @@ namespace CssSprite
                 }
             }
             return false;
-        }
-
-        
-
-
-        /// <summary>
-        /// 获取颜色
-        /// </summary>
-        /// <returns></returns>
-        Color GetBgColor()
-        {
-            Color bgColor = Color.Transparent;
-            string strBgColor = comboBoxBgColor.Text;
-            if (!string.IsNullOrEmpty(strBgColor))
-            {
-                string[] knownColors = Enum.GetNames(typeof(KnownColor));
-                bool isKnownColor = false;
-                foreach (string kc in knownColors)
-                {
-                    if (kc == strBgColor)
-                    {
-                        isKnownColor = true;
-                        break;
-                    }
-                }
-                if (isKnownColor)
-                    bgColor = Color.FromKnownColor((KnownColor)Enum.Parse(typeof(KnownColor), strBgColor));
-                else
-                {
-                    Regex regex = new Regex("#[0-9abcdef]{6}", RegexOptions.IgnoreCase);
-                    if (regex.IsMatch(strBgColor))
-                    {
-                        int red = int.Parse(strBgColor.Substring(1, 2),NumberStyles.AllowHexSpecifier);
-                        int green = int.Parse(strBgColor.Substring(3, 2), NumberStyles.AllowHexSpecifier);
-                        int blue = int.Parse(strBgColor.Substring(5, 2), NumberStyles.AllowHexSpecifier);
-                        bgColor = Color.FromArgb(red,green,blue);
-                    }
-                    else {
-                        bgColor = Color.Transparent;
-                    }
-                }
-            }
-            return bgColor;
-        }
-
-        private void comboBoxBgColor_Changed(object sender, EventArgs e)
-        {
-            Color bgColor = GetBgColor();
-            if (bgColor == Color.Transparent)
-            {
-                bgColor = Color.White;
-            }
-
-            panelImages.BackColor = bgColor;
         }
 
         private void txtSass_KeyDown(object sender, KeyEventArgs e)
