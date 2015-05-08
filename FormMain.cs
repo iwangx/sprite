@@ -12,11 +12,24 @@ using System.Text.RegularExpressions;
 using System.Globalization;
 using System.Drawing.Drawing2D;
 using System.Collections;
+using System.Threading;
 
 namespace CssSprite
 {
     public partial class FormMain : Form
     {
+        /// <summary>
+        /// 版本号
+        /// </summary>
+        public const string CurentVersion = "4.1.0.0";
+
+        /// <summary>
+        /// 服务器地址
+        /// </summary>
+        private const string NetUrl = "https://csssprite.herokuapp.com/";
+
+
+
         private List<ImageInfo> _imgList;
         private string dialogFile = string.Empty;
         private string basePath;
@@ -34,20 +47,49 @@ namespace CssSprite
             internal readonly string FileName;
         }
 
+        private Thread thread;
         public FormMain()
         {
             InitializeComponent();
-            this.Resize += FormMain_Resize;
-            resize();
             panelImages.MouseWheel += panelImages_MouseWheel;
             panelImages.MouseHover += panelImages_MouseHover;
             panelImages.MouseDown += panelImages_MouseDown;
             panelImages.MouseMove += panelImages_MouseMove;
             panelImages.MouseUp += panelImages_MouseUp;
-            //this.SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer, true);
+            this.KeyDown += FormMain_KeyDown;
+
+            ThreadStart th = new ThreadStart(GetService);
+            thread = new Thread(th);
+            thread.Start();
         }
 
-  
+        void FormMain_KeyDown(object sender, KeyEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        void GetService()
+        {
+            try
+            {
+                var version = new VersionInfo() { Version=CurentVersion};
+                var newVersionStr = httpClass.HttpPost(NetUrl, "data=" + XmlSerializer.XMLSerialize<VersionInfo>(version));
+                var newVersion = XmlSerializer.DeXMLSerialize<VersionInfo>(newVersionStr);
+                if (newVersion.Version != version.Version) 
+                {
+
+                }
+                thread.Abort();
+            }
+            catch
+            {
+                //MessageBox.Show(ex.Message);
+            }
+        }
+
+       
+
         /// <summary>
         /// 鼠标的初始位置
         /// </summary>
@@ -132,6 +174,7 @@ namespace CssSprite
             {
                 _isSelect = false;
                 list = new List<PictureBox>();
+
                 foreach(PictureBox pb in panelImages.Controls)
                 {
                     if (pb.Location.X > area.ZeroPoint.X && pb.Location.Y > area.ZeroPoint.Y &&
@@ -148,10 +191,8 @@ namespace CssSprite
             }
         }
 
-        void panelImages_Paint(object sender, PaintEventArgs e)
-        {
-            Console.WriteLine("panelImages_Paint");
-        }
+
+        
 
         private EdgeSize GetEdgeSize(List<PictureBox> list)
         {
@@ -189,19 +230,6 @@ namespace CssSprite
             comboBoxBgColor.DataSource = Enum.GetNames(typeof(KnownColor));
             comboBoxBgColor.Text = "Transparent";
         }
-
-        void FormMain_Resize(object sender, EventArgs e)
-        {
-            resize();
-        }
-
-        private void resize()
-        {
-            txtCss.Width = txtSass.Width = this.Width-20;
-        }
-
-        
-
 
         private void buttonBrowse_Click(object sender, EventArgs e)
         {
@@ -763,15 +791,15 @@ namespace CssSprite
         }
 
 
-        protected override bool IsInputChar(char charCode)
-        {
-            if (charCode == (char)Keys.Left || charCode == (char)Keys.Right || charCode == (char)Keys.Up || charCode == (char)Keys.Down)
-            {
-                return true;
-            }
+        //protected override bool IsInputChar(char charCode)
+        //{
+            //if (charCode == (char)Keys.Left || charCode == (char)Keys.Right || charCode == (char)Keys.Up || charCode == (char)Keys.Down)
+            //{
+            //    return true;
+            //}
 
-            return base.IsInputChar(charCode);
-        }
+            //return base.IsInputChar(charCode);
+        //}
 
         
 
@@ -846,24 +874,6 @@ namespace CssSprite
             if (e.KeyCode == Keys.A && e.Control) { txtSass.SelectAll(); }   
         }
 
-        private void radioButton2_CheckedChanged(object sender, EventArgs e)
-        {
-            var radio = sender as RadioButton;
-            if (radio.Checked) {
-                txtCss.Visible = false;
-                txtSass.Visible = true;
-            }
-        }
-
-        private void radioBtnCss_CheckedChanged(object sender, EventArgs e)
-        {
-            var radio = sender as RadioButton;
-            if (radio.Checked)
-            {
-                txtCss.Visible = true;
-                txtSass.Visible = false;
-            }
-        }
 
         private void txtDir_TextChanged(object sender, EventArgs e)
         {

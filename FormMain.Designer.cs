@@ -40,8 +40,6 @@
             this.txtDir = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.txtName = new System.Windows.Forms.TextBox();
-            this.radioBtnCss = new System.Windows.Forms.RadioButton();
-            this.radioBtnSass = new System.Windows.Forms.RadioButton();
             this.txtCss = new System.Windows.Forms.TextBox();
             this.colorDialog = new System.Windows.Forms.ColorDialog();
             this.chkBoxPhone = new System.Windows.Forms.CheckBox();
@@ -56,12 +54,18 @@
             this.buttonMakeBigImageCss = new System.Windows.Forms.Button();
             this.panelBottom = new System.Windows.Forms.Panel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.panelImages = new System.Windows.Forms.Panel();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.panelImages = new System.Windows.Forms.Panel();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
             this.panelTop.SuspendLayout();
             this.panelBottom.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
+            this.tabControl1.SuspendLayout();
+            this.tabPage1.SuspendLayout();
+            this.tabPage2.SuspendLayout();
             this.SuspendLayout();
             // 
             // openFileDialog
@@ -115,13 +119,14 @@
             // 
             this.txtSass.BackColor = System.Drawing.Color.White;
             this.txtSass.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtSass.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtSass.ForeColor = System.Drawing.Color.RoyalBlue;
-            this.txtSass.Location = new System.Drawing.Point(5, 104);
+            this.txtSass.Location = new System.Drawing.Point(3, 3);
             this.txtSass.Multiline = true;
             this.txtSass.Name = "txtSass";
             this.txtSass.ReadOnly = true;
             this.txtSass.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtSass.Size = new System.Drawing.Size(837, 112);
+            this.txtSass.Size = new System.Drawing.Size(979, 105);
             this.txtSass.TabIndex = 11;
             this.txtSass.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSass_KeyDown);
             // 
@@ -166,43 +171,19 @@
             this.txtName.Text = "img";
             this.txtName.TextChanged += new System.EventHandler(this.txtName_TextChanged);
             // 
-            // radioBtnCss
-            // 
-            this.radioBtnCss.AutoSize = true;
-            this.radioBtnCss.Location = new System.Drawing.Point(83, 82);
-            this.radioBtnCss.Name = "radioBtnCss";
-            this.radioBtnCss.Size = new System.Drawing.Size(65, 16);
-            this.radioBtnCss.TabIndex = 17;
-            this.radioBtnCss.Text = "css代码";
-            this.radioBtnCss.UseVisualStyleBackColor = true;
-            this.radioBtnCss.CheckedChanged += new System.EventHandler(this.radioBtnCss_CheckedChanged);
-            // 
-            // radioBtnSass
-            // 
-            this.radioBtnSass.AutoSize = true;
-            this.radioBtnSass.Checked = true;
-            this.radioBtnSass.Location = new System.Drawing.Point(6, 82);
-            this.radioBtnSass.Name = "radioBtnSass";
-            this.radioBtnSass.Size = new System.Drawing.Size(71, 16);
-            this.radioBtnSass.TabIndex = 18;
-            this.radioBtnSass.TabStop = true;
-            this.radioBtnSass.Text = "sass代码";
-            this.radioBtnSass.UseVisualStyleBackColor = true;
-            this.radioBtnSass.CheckedChanged += new System.EventHandler(this.radioButton2_CheckedChanged);
-            // 
             // txtCss
             // 
             this.txtCss.BackColor = System.Drawing.Color.White;
             this.txtCss.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtCss.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtCss.ForeColor = System.Drawing.Color.RoyalBlue;
-            this.txtCss.Location = new System.Drawing.Point(3, 104);
+            this.txtCss.Location = new System.Drawing.Point(3, 3);
             this.txtCss.Multiline = true;
             this.txtCss.Name = "txtCss";
             this.txtCss.ReadOnly = true;
             this.txtCss.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtCss.Size = new System.Drawing.Size(842, 112);
+            this.txtCss.Size = new System.Drawing.Size(979, 71);
             this.txtCss.TabIndex = 19;
-            this.txtCss.Visible = false;
             // 
             // chkBoxPhone
             // 
@@ -352,18 +333,15 @@
             // 
             // panelBottom
             // 
+            this.panelBottom.Controls.Add(this.tabControl1);
             this.panelBottom.Controls.Add(this.txtDir);
             this.panelBottom.Controls.Add(this.chkBoxPhone);
             this.panelBottom.Controls.Add(this.label1);
-            this.panelBottom.Controls.Add(this.txtCss);
             this.panelBottom.Controls.Add(this.label3);
-            this.panelBottom.Controls.Add(this.radioBtnSass);
-            this.panelBottom.Controls.Add(this.radioBtnCss);
             this.panelBottom.Controls.Add(this.comboBoxImgType);
             this.panelBottom.Controls.Add(this.txtName);
             this.panelBottom.Controls.Add(this.comboBoxBgColor);
             this.panelBottom.Controls.Add(this.label5);
-            this.panelBottom.Controls.Add(this.txtSass);
             this.panelBottom.Controls.Add(this.label2);
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panelBottom.Location = new System.Drawing.Point(3, 292);
@@ -388,6 +366,16 @@
             this.tableLayoutPanel1.Size = new System.Drawing.Size(1008, 545);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
+            // panel1
+            // 
+            this.panel1.BackgroundImage = global::CssSprite.Properties.Resources.QQ截图201504271504082;
+            this.panel1.Controls.Add(this.panelImages);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(3, 63);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(1002, 223);
+            this.panel1.TabIndex = 0;
+            // 
             // panelImages
             // 
             this.panelImages.AutoScroll = true;
@@ -399,15 +387,37 @@
             this.panelImages.Size = new System.Drawing.Size(1002, 223);
             this.panelImages.TabIndex = 0;
             // 
-            // panel1
+            // tabControl1
             // 
-            this.panel1.BackgroundImage = global::CssSprite.Properties.Resources.QQ截图201504271504082;
-            this.panel1.Controls.Add(this.panelImages);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(3, 63);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1002, 223);
-            this.panel1.TabIndex = 0;
+            this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Location = new System.Drawing.Point(6, 82);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(993, 137);
+            this.tabControl1.TabIndex = 21;
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.txtSass);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(985, 111);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "sass代码";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this.txtCss);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(985, 77);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "css代码";
+            this.tabPage2.UseVisualStyleBackColor = true;
             // 
             // FormMain
             // 
@@ -425,6 +435,11 @@
             this.panelBottom.PerformLayout();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
+            this.tabControl1.ResumeLayout(false);
+            this.tabPage1.ResumeLayout(false);
+            this.tabPage1.PerformLayout();
+            this.tabPage2.ResumeLayout(false);
+            this.tabPage2.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -447,8 +462,6 @@
         private System.Windows.Forms.TextBox txtDir;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox txtName;
-        private System.Windows.Forms.RadioButton radioBtnCss;
-        private System.Windows.Forms.RadioButton radioBtnSass;
         private System.Windows.Forms.TextBox txtCss;
         private System.Windows.Forms.ColorDialog colorDialog;
         private System.Windows.Forms.CheckBox chkBoxPhone;
@@ -460,6 +473,9 @@
         private System.Windows.Forms.Button btnDelete;
         private System.Windows.Forms.Button btnAdd;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.TabPage tabPage2;
     }
 }
 
