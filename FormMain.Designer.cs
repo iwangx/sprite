@@ -44,6 +44,14 @@
             this.colorDialog = new System.Windows.Forms.ColorDialog();
             this.chkBoxPhone = new System.Windows.Forms.CheckBox();
             this.panelTop = new System.Windows.Forms.Panel();
+            this.panelBottom = new System.Windows.Forms.Panel();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.panelImages = new System.Windows.Forms.Panel();
+            this.btnUpdate = new System.Windows.Forms.Button();
             this.btnDelete = new System.Windows.Forms.Button();
             this.btnAdd = new System.Windows.Forms.Button();
             this.btnSprite = new System.Windows.Forms.Button();
@@ -52,20 +60,13 @@
             this.buttonVRange = new System.Windows.Forms.Button();
             this.buttonHRange = new System.Windows.Forms.Button();
             this.buttonMakeBigImageCss = new System.Windows.Forms.Button();
-            this.panelBottom = new System.Windows.Forms.Panel();
-            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.panelImages = new System.Windows.Forms.Panel();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
             this.panelTop.SuspendLayout();
             this.panelBottom.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
-            this.panel1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // openFileDialog
@@ -182,7 +183,7 @@
             this.txtCss.Name = "txtCss";
             this.txtCss.ReadOnly = true;
             this.txtCss.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtCss.Size = new System.Drawing.Size(979, 71);
+            this.txtCss.Size = new System.Drawing.Size(979, 105);
             this.txtCss.TabIndex = 19;
             // 
             // chkBoxPhone
@@ -198,6 +199,7 @@
             // 
             // panelTop
             // 
+            this.panelTop.Controls.Add(this.btnUpdate);
             this.panelTop.Controls.Add(this.btnDelete);
             this.panelTop.Controls.Add(this.btnAdd);
             this.panelTop.Controls.Add(this.btnSprite);
@@ -212,6 +214,108 @@
             this.panelTop.Padding = new System.Windows.Forms.Padding(0, 20, 0, 20);
             this.panelTop.Size = new System.Drawing.Size(1002, 54);
             this.panelTop.TabIndex = 21;
+            // 
+            // panelBottom
+            // 
+            this.panelBottom.Controls.Add(this.tabControl1);
+            this.panelBottom.Controls.Add(this.txtDir);
+            this.panelBottom.Controls.Add(this.chkBoxPhone);
+            this.panelBottom.Controls.Add(this.label1);
+            this.panelBottom.Controls.Add(this.label3);
+            this.panelBottom.Controls.Add(this.comboBoxImgType);
+            this.panelBottom.Controls.Add(this.txtName);
+            this.panelBottom.Controls.Add(this.comboBoxBgColor);
+            this.panelBottom.Controls.Add(this.label5);
+            this.panelBottom.Controls.Add(this.label2);
+            this.panelBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panelBottom.Location = new System.Drawing.Point(3, 292);
+            this.panelBottom.Name = "panelBottom";
+            this.panelBottom.Size = new System.Drawing.Size(1002, 250);
+            this.panelBottom.TabIndex = 0;
+            // 
+            // tableLayoutPanel1
+            // 
+            this.tableLayoutPanel1.ColumnCount = 1;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.Controls.Add(this.panel1, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.panelTop, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.panelBottom, 0, 2);
+            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.RowCount = 3;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 60F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 256F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(1008, 545);
+            this.tableLayoutPanel1.TabIndex = 0;
+            // 
+            // tabControl1
+            // 
+            this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Location = new System.Drawing.Point(6, 82);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(993, 137);
+            this.tabControl1.TabIndex = 21;
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.txtSass);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(985, 111);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "sass代码";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this.txtCss);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(985, 111);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "css代码";
+            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // panel1
+            // 
+            this.panel1.BackgroundImage = global::CssSprite.Properties.Resources.QQ截图201504271504082;
+            this.panel1.Controls.Add(this.panelImages);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(3, 63);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(1002, 223);
+            this.panel1.TabIndex = 0;
+            // 
+            // panelImages
+            // 
+            this.panelImages.AutoScroll = true;
+            this.panelImages.BackColor = System.Drawing.Color.Transparent;
+            this.panelImages.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelImages.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelImages.Location = new System.Drawing.Point(0, 0);
+            this.panelImages.Name = "panelImages";
+            this.panelImages.Size = new System.Drawing.Size(1002, 223);
+            this.panelImages.TabIndex = 0;
+            // 
+            // btnUpdate
+            // 
+            this.btnUpdate.BackgroundImage = global::CssSprite.Properties.Resources.update;
+            this.btnUpdate.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnUpdate.FlatAppearance.BorderSize = 0;
+            this.btnUpdate.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnUpdate.Location = new System.Drawing.Point(375, 9);
+            this.btnUpdate.Name = "btnUpdate";
+            this.btnUpdate.Size = new System.Drawing.Size(40, 40);
+            this.btnUpdate.TabIndex = 25;
+            this.btnUpdate.UseVisualStyleBackColor = true;
+            this.btnUpdate.Visible = false;
+            this.btnUpdate.Click += new System.EventHandler(this.btnUpdate_Click);
             // 
             // btnDelete
             // 
@@ -331,94 +435,6 @@
             this.buttonMakeBigImageCss.UseVisualStyleBackColor = false;
             this.buttonMakeBigImageCss.Click += new System.EventHandler(this.ButtonMakeBigImageCss_Click);
             // 
-            // panelBottom
-            // 
-            this.panelBottom.Controls.Add(this.tabControl1);
-            this.panelBottom.Controls.Add(this.txtDir);
-            this.panelBottom.Controls.Add(this.chkBoxPhone);
-            this.panelBottom.Controls.Add(this.label1);
-            this.panelBottom.Controls.Add(this.label3);
-            this.panelBottom.Controls.Add(this.comboBoxImgType);
-            this.panelBottom.Controls.Add(this.txtName);
-            this.panelBottom.Controls.Add(this.comboBoxBgColor);
-            this.panelBottom.Controls.Add(this.label5);
-            this.panelBottom.Controls.Add(this.label2);
-            this.panelBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelBottom.Location = new System.Drawing.Point(3, 292);
-            this.panelBottom.Name = "panelBottom";
-            this.panelBottom.Size = new System.Drawing.Size(1002, 250);
-            this.panelBottom.TabIndex = 0;
-            // 
-            // tableLayoutPanel1
-            // 
-            this.tableLayoutPanel1.ColumnCount = 1;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Controls.Add(this.panel1, 0, 1);
-            this.tableLayoutPanel1.Controls.Add(this.panelTop, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.panelBottom, 0, 2);
-            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
-            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 3;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 60F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 256F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(1008, 545);
-            this.tableLayoutPanel1.TabIndex = 0;
-            // 
-            // panel1
-            // 
-            this.panel1.BackgroundImage = global::CssSprite.Properties.Resources.QQ截图201504271504082;
-            this.panel1.Controls.Add(this.panelImages);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(3, 63);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1002, 223);
-            this.panel1.TabIndex = 0;
-            // 
-            // panelImages
-            // 
-            this.panelImages.AutoScroll = true;
-            this.panelImages.BackColor = System.Drawing.Color.Transparent;
-            this.panelImages.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panelImages.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelImages.Location = new System.Drawing.Point(0, 0);
-            this.panelImages.Name = "panelImages";
-            this.panelImages.Size = new System.Drawing.Size(1002, 223);
-            this.panelImages.TabIndex = 0;
-            // 
-            // tabControl1
-            // 
-            this.tabControl1.Controls.Add(this.tabPage1);
-            this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Location = new System.Drawing.Point(6, 82);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(993, 137);
-            this.tabControl1.TabIndex = 21;
-            // 
-            // tabPage1
-            // 
-            this.tabPage1.Controls.Add(this.txtSass);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(985, 111);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "sass代码";
-            this.tabPage1.UseVisualStyleBackColor = true;
-            // 
-            // tabPage2
-            // 
-            this.tabPage2.Controls.Add(this.txtCss);
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(985, 77);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "css代码";
-            this.tabPage2.UseVisualStyleBackColor = true;
-            // 
             // FormMain
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -434,12 +450,12 @@
             this.panelBottom.ResumeLayout(false);
             this.panelBottom.PerformLayout();
             this.tableLayoutPanel1.ResumeLayout(false);
-            this.panel1.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
+            this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -476,6 +492,7 @@
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.Button btnUpdate;
     }
 }
 

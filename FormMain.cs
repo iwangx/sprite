@@ -21,7 +21,7 @@ namespace CssSprite
         /// <summary>
         /// 版本号
         /// </summary>
-        public const string CurentVersion = "4.1.0.0";
+        public const string CurentVersion = "3.1.0.0";
 
         /// <summary>
         /// 服务器地址
@@ -29,7 +29,7 @@ namespace CssSprite
         private const string NetUrl = "https://csssprite.herokuapp.com/";
 
 
-
+        private VersionInfo newVersion;
         private List<ImageInfo> _imgList;
         private string dialogFile = string.Empty;
         private string basePath;
@@ -68,6 +68,11 @@ namespace CssSprite
             throw new NotImplementedException();
         }
 
+        private delegate void EnableButtonCallBack();
+
+        private void ShowBtnUpdate(){
+            btnUpdate.Visible = true;
+        }
 
         void GetService()
         {
@@ -75,20 +80,24 @@ namespace CssSprite
             {
                 var version = new VersionInfo() { Version=CurentVersion};
                 var newVersionStr = httpClass.HttpPost(NetUrl, "data=" + XmlSerializer.XMLSerialize<VersionInfo>(version));
-                var newVersion = XmlSerializer.DeXMLSerialize<VersionInfo>(newVersionStr);
+                newVersion = XmlSerializer.DeXMLSerialize<VersionInfo>(newVersionStr);
                 if (newVersion.Version != version.Version) 
                 {
-
+                    this.Invoke(new EnableButtonCallBack(ShowBtnUpdate));
                 }
                 thread.Abort();
             }
             catch
             {
-                //MessageBox.Show(ex.Message);
+                
             }
         }
 
-       
+        private void btnUpdate_Click(object sender, EventArgs e)
+        {
+            var updateForm = new Update(CurentVersion, newVersion);
+            updateForm.ShowDialog();
+        }
 
         /// <summary>
         /// 鼠标的初始位置
@@ -187,7 +196,7 @@ namespace CssSprite
                 }
                 var size = GetEdgeSize(list);
                 panelImages.Refresh();
-                g.DrawRectangle(pen, size.MinWidth, size.MinHeight, size.MaxWidth - size.MinWidth, size.MaxHeight - size.MinHeight);
+                //g.DrawRectangle(pen, size.MinWidth, size.MinHeight, size.MaxWidth - size.MinWidth, size.MaxHeight - size.MinHeight);
             }
         }
 
@@ -913,5 +922,7 @@ namespace CssSprite
             AboutUs a=new AboutUs();
             a.ShowDialog();
         }
+
+        
     }
 }
