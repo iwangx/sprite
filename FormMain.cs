@@ -13,6 +13,7 @@ using System.Globalization;
 using System.Drawing.Drawing2D;
 using System.Collections;
 using System.Threading;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace CssSprite
 {
@@ -255,6 +256,7 @@ namespace CssSprite
                 folderBrowserDialog.SelectedPath = basePath;
                 LoadImages(openFileDialog.FileNames);
                 ButtonVRange_Click(null, EventArgs.Empty);
+                SetBase64();
             }
         }
 
@@ -306,6 +308,7 @@ namespace CssSprite
                     chkBoxPhone.Checked = spriteFile.IsPhone;
                     panelImages.ResumeLayout(false);
                     SetCssText();
+                    SetBase64();
                 }
                 catch (Exception ex)
                 {
@@ -335,6 +338,7 @@ namespace CssSprite
                     img.Tag = imgInfo;
                     _imgList.Add(imgInfo);
                     AddPictureBox(img, 0, 0);
+                    SetBase64();
                 }
             }
         }
@@ -355,6 +359,7 @@ namespace CssSprite
                     }
                     panelImages.Controls.Remove(_selectedPicture);
                     _selectedPicture = null;
+                    SetBase64();
                 }
             }
             else
@@ -481,10 +486,8 @@ namespace CssSprite
         /// 设置css的文本
         /// </summary>
         public void SetCssText() {
-
             int maxWidth, maxHeight, minHeight, minWidth;
             maxWidth = maxHeight = minHeight = minWidth = 0;
-
             //把所有元素按照0，0点为标准，通过最小向上距离和向左距离平移，获取最大距离
             foreach (PictureBox pb in panelImages.Controls)
             {
@@ -560,6 +563,57 @@ namespace CssSprite
             var imgHeight = isPhone ? img.Height / 2 : img.Height;
             var imgWidth = isPhone ? img.Width / 2 : img.Width;
             return "." + GetCssName(imgInfo.Name) + "{height:" + imgHeight + "px;width:" + imgWidth + "px;background-position:" + _left + " " + _top + ";}" + Environment.NewLine;
+        }
+
+        void SetBase64()
+        {
+            string base64Sass = string.Empty;
+            string base64Css = string.Empty;
+            BinaryFormatter binFormatter = new BinaryFormatter();
+            ImageInfo imageInfo;
+            int height, width;
+            var isPhone = chkBoxPhone.Checked;
+            foreach (PictureBox pb in panelImages.Controls)
+            {
+                Bitmap bmp = new Bitmap(pb.Image, pb.Image.Width, pb.Image.Height);
+                imageInfo = (ImageInfo)pb.Image.Tag;
+                MemoryStream memStream = new MemoryStream();
+                ImageFormat format = ImageFormat.Png;
+                switch (Path.GetExtension(imageInfo.FileName))
+                {
+                    case "jpeg":
+                        format = ImageFormat.Jpeg;
+                        break;
+                    case "jpg":
+                        format = ImageFormat.Jpeg;
+                        break;
+                    case "png":
+                        format = ImageFormat.Png;
+                        break;
+                    case "gif":
+                        format = ImageFormat.Gif;
+                        break;
+                    default:
+                        break;
+                }
+                bmp.Save(memStream, format);
+                byte[] arr = new byte[memStream.Length];
+                memStream.Position = 0;
+                memStream.Read(arr, 0, (int)memStream.Length);
+                memStream.Close();
+                height = pb.Image.Height;
+                height = isPhone ? height / 2 : height;
+                width = pb.Image.Width;
+                width = isPhone ? width / 2 : width;
+                base64Sass += "@mixin ";
+                base64Css += ".";
+                var code = GetCssName(imageInfo.Name) + "{height:" + height + "px;width:" + width + "px;background:url(data:image/png;base64," + Convert.ToBase64String(arr) + ") no-repeat}" + Environment.NewLine;
+                base64Sass += code;
+                base64Css += code;
+            }
+
+            txtBase64Sass.Text = base64Sass;
+            txtBase64Css.Text = base64Css;
         }
 
         string GetCssName(string imgName)
@@ -760,6 +814,7 @@ namespace CssSprite
                         else g.Clear(Color.Transparent);
                         
                         SetCssText();
+                        SetBase64();
                         var sprite = new SpriteFile() { CssFileName = txtDir.Text, ImageName = txtName.Text, SpriteList = new List<Sprite>(), IsPhone = chkBoxPhone.Checked };                        
                         try
                         {
@@ -867,6 +922,19 @@ namespace CssSprite
             a.ShowDialog();
         }
 
-        
+        private void txtCss_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.A && e.Control) { txtCss.SelectAll(); }  
+        }
+
+        private void txtBase64Sass_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.A && e.Control) { txtBase64Sass.SelectAll(); }  
+        }
+
+        private void txtBase64Css_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.A && e.Control) { txtBase64Css.SelectAll(); }  
+        }
     }
 }
