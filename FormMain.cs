@@ -62,6 +62,7 @@ namespace CssSprite
             ThreadStart th = new ThreadStart(GetService);
             thread = new Thread(th);
             thread.Start();
+            comboBoxImgType.DropDownStyle = ComboBoxStyle.DropDownList;
         }
 
         void FormMain_KeyDown(object sender, KeyEventArgs e)
