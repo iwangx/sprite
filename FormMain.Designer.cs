@@ -92,6 +92,7 @@
             this.comboBoxImgType.TabIndex = 7;
             this.comboBoxImgType.TabStop = false;
             this.comboBoxImgType.Text = "Png";
+            this.comboBoxImgType.SelectedIndexChanged += new System.EventHandler(this.comboBoxImgType_SelectedIndexChanged);
             // 
             // label1
             // 

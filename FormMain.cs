@@ -1014,5 +1014,10 @@ namespace CssSprite
         {
             if (e.KeyCode == Keys.A && e.Control) { txtBase64Css.SelectAll(); }  
         }
+
+        private void comboBoxImgType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            SetCssText();
+        }
     }
 }
