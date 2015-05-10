@@ -57,7 +57,9 @@ namespace CssSprite
             panelImages.MouseDown += panelImages_MouseDown;
             panelImages.MouseMove += panelImages_MouseMove;
             panelImages.MouseUp += panelImages_MouseUp;
-            this.KeyDown += FormMain_KeyDown;
+
+
+            panelImages.KeyDown += panelImages_KeyDown;
 
             ThreadStart th = new ThreadStart(GetService);
             thread = new Thread(th);
@@ -65,9 +67,54 @@ namespace CssSprite
             comboBoxImgType.DropDownStyle = ComboBoxStyle.DropDownList;
         }
 
-        void FormMain_KeyDown(object sender, KeyEventArgs e)
+        Point keyDownPoint;
+        void panelImages_KeyDown(object sender, KeyEventArgs e)
         {
-            throw new NotImplementedException();
+
+            if (_selectedPicture != null && list == null)
+            {
+                keyDownPoint = new Point(_selectedPicture.Location.X, _selectedPicture.Location.Y);
+                switch (e.KeyCode)
+                {
+                    case Keys.Left:
+                        keyDownPoint.X -= 1;
+                        break;
+                    case Keys.Up:
+                        keyDownPoint.Y -= 1;
+                        break;
+                    case Keys.Down:
+                        keyDownPoint.Y += 1;
+                        break;
+                    case Keys.Right:
+                        keyDownPoint.X += 1;
+                        break;
+                }
+                _selectedPicture.Location = keyDownPoint;
+            }
+            else if(list!=null) {
+                foreach (PictureBox pb in list)
+                {
+                    keyDownPoint = new Point(pb.Location.X, pb.Location.Y);
+                    switch (e.KeyCode)
+                    {
+                        case Keys.Left:
+                            keyDownPoint.X -= 1;
+                            break;
+                        case Keys.Up:
+                            keyDownPoint.Y -= 1;
+                            break;
+                        case Keys.Down:
+                            keyDownPoint.Y += 1;
+                            break;
+                        case Keys.Right:
+                            keyDownPoint.X += 1;
+                            break;
+                    }
+                    pb.Location = keyDownPoint;
+                }
+                DrawRectangle(list);
+            }
+            SetCssText();
         }
 
         private delegate void EnableButtonCallBack();
@@ -196,14 +243,20 @@ namespace CssSprite
                         list.Add(pb);
                     }
                 }
-                var size = GetEdgeSize(list);
-                panelImages.Refresh();
-                //g.DrawRectangle(pen, size.MinWidth, size.MinHeight, size.MaxWidth - size.MinWidth, size.MaxHeight - size.MinHeight);
+                DrawRectangle(list);
             }
         }
 
-
-        
+        /// <summary>
+        /// 重绘矩形边框
+        /// </summary>
+        /// <param name="lists"></param>
+        void DrawRectangle(List<PictureBox> list) 
+        {
+            var size = GetEdgeSize(list);
+            panelImages.Refresh();
+            g.DrawRectangle(pen, size.MinWidth, size.MinHeight, size.MaxWidth - size.MinWidth, size.MaxHeight - size.MinHeight);
+        }
 
         private EdgeSize GetEdgeSize(List<PictureBox> list)
         {
@@ -445,6 +498,9 @@ namespace CssSprite
             return true;
         }
 
+        /// <summary>
+        /// 选中的单张图片
+        /// </summary>
         private PictureBox _selectedPicture=null;
         private Size _bigSize;
 
