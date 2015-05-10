@@ -58,35 +58,44 @@ namespace CssSprite
             panelImages.MouseMove += panelImages_MouseMove;
             panelImages.MouseUp += panelImages_MouseUp;
 
-
             panelImages.KeyDown += panelImages_KeyDown;
-
+            panelImages.LostFocus += panelImages_LostFocus;
             ThreadStart th = new ThreadStart(GetService);
             thread = new Thread(th);
             thread.Start();
             comboBoxImgType.DropDownStyle = ComboBoxStyle.DropDownList;
         }
 
+        void panelImages_LostFocus(object sender, EventArgs e)
+        {
+            _selectedPicture = null;
+            list = null; 
+        }
+
         Point keyDownPoint;
         void panelImages_KeyDown(object sender, KeyEventArgs e)
         {
-
-            if (_selectedPicture != null && list == null)
+            if (_selectedPicture != null && list==null || list.Count == 0)
             {
                 keyDownPoint = new Point(_selectedPicture.Location.X, _selectedPicture.Location.Y);
                 switch (e.KeyCode)
                 {
                     case Keys.Left:
-                        keyDownPoint.X -= 1;
+                        if (keyDownPoint.X>0) {
+                            keyDownPoint.X -= 1;
+                        }
                         break;
                     case Keys.Up:
-                        keyDownPoint.Y -= 1;
+                        if (keyDownPoint.Y > 0)
+                        {
+                            keyDownPoint.Y -= 1;
+                        }
                         break;
                     case Keys.Down:
-                        keyDownPoint.Y += 1;
+                            keyDownPoint.Y += 1;
                         break;
                     case Keys.Right:
-                        keyDownPoint.X += 1;
+                            keyDownPoint.X += 1;
                         break;
                 }
                 _selectedPicture.Location = keyDownPoint;
@@ -98,10 +107,23 @@ namespace CssSprite
                     switch (e.KeyCode)
                     {
                         case Keys.Left:
-                            keyDownPoint.X -= 1;
+                            if (keyDownPoint.X > 0)
+                            {
+                                keyDownPoint.X -= 1;
+                            }
+                            else {
+                                return;
+                            }
                             break;
                         case Keys.Up:
-                            keyDownPoint.Y -= 1;
+                            if (keyDownPoint.Y > 0)
+                            {
+                                keyDownPoint.Y -= 1;
+                            }
+                            else
+                            {
+                                return;
+                            }
                             break;
                         case Keys.Down:
                             keyDownPoint.Y += 1;
@@ -275,8 +297,6 @@ namespace CssSprite
             }
             return size;
         }
-
-
 
         void panelImages_MouseHover(object sender, EventArgs e)
         {
@@ -723,6 +743,7 @@ namespace CssSprite
             var p = (PictureBox)sender;
             p.Tag="1";
             p.Refresh();
+            panelImages.Focus();
             _selectedPicture = p;
         }
 
