@@ -22,7 +22,7 @@ namespace CssSprite
         /// <summary>
         /// 版本号
         /// </summary>
-        public const string CurentVersion = "3.1.0.0";
+        public const string CurentVersion = "4.0.0.0";
 
         /// <summary>
         /// 服务器地址
@@ -75,13 +75,14 @@ namespace CssSprite
         Point keyDownPoint;
         void panelImages_KeyDown(object sender, KeyEventArgs e)
         {
-            if (_selectedPicture != null && list==null || list.Count == 0)
+            if ((_selectedPicture != null && list == null) || (_selectedPicture != null && list.Count == 0))
             {
                 keyDownPoint = new Point(_selectedPicture.Location.X, _selectedPicture.Location.Y);
                 switch (e.KeyCode)
                 {
                     case Keys.Left:
-                        if (keyDownPoint.X>0) {
+                        if (keyDownPoint.X > 0)
+                        {
                             keyDownPoint.X -= 1;
                         }
                         break;
@@ -92,15 +93,16 @@ namespace CssSprite
                         }
                         break;
                     case Keys.Down:
-                            keyDownPoint.Y += 1;
+                        keyDownPoint.Y += 1;
                         break;
                     case Keys.Right:
-                            keyDownPoint.X += 1;
+                        keyDownPoint.X += 1;
                         break;
                 }
                 _selectedPicture.Location = keyDownPoint;
             }
-            else if(list!=null) {
+            else if (list != null)
+            {
                 foreach (PictureBox pb in list)
                 {
                     keyDownPoint = new Point(pb.Location.X, pb.Location.Y);
@@ -111,7 +113,8 @@ namespace CssSprite
                             {
                                 keyDownPoint.X -= 1;
                             }
-                            else {
+                            else
+                            {
                                 return;
                             }
                             break;
@@ -142,6 +145,7 @@ namespace CssSprite
         private delegate void EnableButtonCallBack();
 
         private void ShowBtnUpdate(){
+            this.Text = "Css背景图合并工具(有新更新，请点击下方更新按钮更新)";
             btnUpdate.Visible = true;
         }
 
@@ -309,10 +313,6 @@ namespace CssSprite
             panelImages.Refresh();
         }
 
-        private void FormMain_Load(object sender, EventArgs e)
-        {
-            
-        }
 
         private void buttonBrowse_Click(object sender, EventArgs e)
         {
