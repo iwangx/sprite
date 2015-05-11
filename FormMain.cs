@@ -12,11 +12,25 @@ using System.Text.RegularExpressions;
 using System.Globalization;
 using System.Drawing.Drawing2D;
 using System.Collections;
+using System.Threading;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace CssSprite
 {
     public partial class FormMain : Form
     {
+        /// <summary>
+        /// 版本号
+        /// </summary>
+        public const string CurentVersion = "4.0.0.0";
+
+        /// <summary>
+        /// 服务器地址
+        /// </summary>
+        private const string NetUrl = "https://csssprite.herokuapp.com/";
+
+
+        private VersionInfo newVersion;
         private List<ImageInfo> _imgList;
         private string dialogFile = string.Empty;
         private string basePath;
@@ -34,13 +48,258 @@ namespace CssSprite
             internal readonly string FileName;
         }
 
+        private Thread thread;
         public FormMain()
         {
             InitializeComponent();
-            this.Resize += FormMain_Resize;
-            resize();
             panelImages.MouseWheel += panelImages_MouseWheel;
             panelImages.MouseHover += panelImages_MouseHover;
+            panelImages.MouseDown += panelImages_MouseDown;
+            panelImages.MouseMove += panelImages_MouseMove;
+            panelImages.MouseUp += panelImages_MouseUp;
+
+            panelImages.KeyDown += panelImages_KeyDown;
+            panelImages.LostFocus += panelImages_LostFocus;
+            ThreadStart th = new ThreadStart(GetService);
+            thread = new Thread(th);
+            thread.Start();
+            comboBoxImgType.DropDownStyle = ComboBoxStyle.DropDownList;
+        }
+
+        void panelImages_LostFocus(object sender, EventArgs e)
+        {
+            _selectedPicture = null;
+            list = null; 
+        }
+
+        Point keyDownPoint;
+        void panelImages_KeyDown(object sender, KeyEventArgs e)
+        {
+            if ((_selectedPicture != null && list == null) || (_selectedPicture != null && list.Count == 0))
+            {
+                keyDownPoint = new Point(_selectedPicture.Location.X, _selectedPicture.Location.Y);
+                switch (e.KeyCode)
+                {
+                    case Keys.Left:
+                        if (keyDownPoint.X > 0)
+                        {
+                            keyDownPoint.X -= 1;
+                        }
+                        break;
+                    case Keys.Up:
+                        if (keyDownPoint.Y > 0)
+                        {
+                            keyDownPoint.Y -= 1;
+                        }
+                        break;
+                    case Keys.Down:
+                        keyDownPoint.Y += 1;
+                        break;
+                    case Keys.Right:
+                        keyDownPoint.X += 1;
+                        break;
+                }
+                _selectedPicture.Location = keyDownPoint;
+            }
+            else if (list != null)
+            {
+                foreach (PictureBox pb in list)
+                {
+                    keyDownPoint = new Point(pb.Location.X, pb.Location.Y);
+                    switch (e.KeyCode)
+                    {
+                        case Keys.Left:
+                            if (keyDownPoint.X > 0)
+                            {
+                                keyDownPoint.X -= 1;
+                            }
+                            else
+                            {
+                                return;
+                            }
+                            break;
+                        case Keys.Up:
+                            if (keyDownPoint.Y > 0)
+                            {
+                                keyDownPoint.Y -= 1;
+                            }
+                            else
+                            {
+                                return;
+                            }
+                            break;
+                        case Keys.Down:
+                            keyDownPoint.Y += 1;
+                            break;
+                        case Keys.Right:
+                            keyDownPoint.X += 1;
+                            break;
+                    }
+                    pb.Location = keyDownPoint;
+                }
+                DrawRectangle(list);
+            }
+            SetCssText();
+        }
+
+        private delegate void EnableButtonCallBack();
+
+        private void ShowBtnUpdate(){
+            this.Text = "Css背景图合并工具(有新更新，请点击下方更新按钮更新)";
+            btnUpdate.Visible = true;
+        }
+
+        void GetService()
+        {
+            try
+            {
+                var version = new VersionInfo() { Version=CurentVersion};
+                var newVersionStr = httpClass.HttpPost(NetUrl, "data=" + XmlSerializer.XMLSerialize<VersionInfo>(version));
+                newVersion = XmlSerializer.DeXMLSerialize<VersionInfo>(newVersionStr);
+                if (newVersion.Version != version.Version) 
+                {
+                    this.Invoke(new EnableButtonCallBack(ShowBtnUpdate));
+                }
+                thread.Abort();
+            }
+            catch
+            {
+                
+            }
+        }
+
+        private void btnUpdate_Click(object sender, EventArgs e)
+        {
+            var updateForm = new Update(CurentVersion, newVersion);
+            updateForm.ShowDialog();
+        }
+
+        /// <summary>
+        /// 鼠标的初始位置
+        /// </summary>
+        Point _panelPoint;
+        /// <summary>
+        /// 是否在拖动
+        /// </summary>
+        bool _isSelect = false;
+        /// <summary>
+        /// 画笔
+        /// </summary>
+        Graphics g;
+        /// <summary>
+        /// 颜色笔
+        /// </summary>
+        Pen pen;
+        /// <summary>
+        /// 区域
+        /// </summary>
+        Area area;
+        /// <summary>
+        /// 零时装载选中图片列表
+        /// </summary>
+        List<PictureBox> list;
+        void panelImages_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                list = null;
+                pen = new Pen(Color.Blue);
+                g = panelImages.CreateGraphics();
+                _panelPoint = new Point(e.X, e.Y);
+                _isSelect = true;
+                area = new Area();
+            }
+            else
+            {
+                _isSelect = false;
+            }
+        }
+        
+        void panelImages_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (_isSelect && list == null)
+            {
+                panelImages.Refresh();
+                if (e.X > _panelPoint.X && e.Y > _panelPoint.Y)
+                {
+                    area.ZeroPoint = new Point(_panelPoint.X, _panelPoint.Y);
+                    area.Height = e.Y - _panelPoint.Y;
+                    area.Width = e.X - _panelPoint.X;
+                }
+                else if (e.X < _panelPoint.X && e.Y < _panelPoint.Y)
+                {
+                    area.ZeroPoint = new Point(e.X, e.Y);
+                    area.Height = _panelPoint.Y - e.Y;
+                    area.Width = _panelPoint.X - e.X;
+                }
+                else if (e.X < _panelPoint.X && e.Y > _panelPoint.Y)
+                {
+                    area.ZeroPoint = new Point(e.X, _panelPoint.Y);
+                    area.Width = _panelPoint.X - e.X;
+                    area.Height = e.Y - _panelPoint.Y;
+                }
+                else
+                {
+                    area.ZeroPoint = new Point(_panelPoint.X, e.Y);
+                    area.Width = e.X - _panelPoint.X;
+                    area.Height = _panelPoint.Y - e.Y;
+                }
+                g.DrawRectangle(pen, area.ZeroPoint.X, area.ZeroPoint.Y, area.Width, area.Height);
+            }
+            else if (_isSelect && list != null)
+            {
+                
+            }
+        }
+
+        void panelImages_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (_isSelect) 
+            {
+                _isSelect = false;
+                list = new List<PictureBox>();
+
+                foreach(PictureBox pb in panelImages.Controls)
+                {
+                    if (pb.Location.X > area.ZeroPoint.X && pb.Location.Y > area.ZeroPoint.Y &&
+                        pb.Location.X + pb.Width < area.ZeroPoint.X + area.Width &&
+                        pb.Location.Y + pb.Height < area.ZeroPoint.Y + area.Height
+                        ) 
+                    {
+                        list.Add(pb);
+                    }
+                }
+                DrawRectangle(list);
+            }
+        }
+
+        /// <summary>
+        /// 重绘矩形边框
+        /// </summary>
+        /// <param name="lists"></param>
+        void DrawRectangle(List<PictureBox> list) 
+        {
+            var size = GetEdgeSize(list);
+            panelImages.Refresh();
+            g.DrawRectangle(pen, size.MinWidth, size.MinHeight, size.MaxWidth - size.MinWidth, size.MaxHeight - size.MinHeight);
+        }
+
+        private EdgeSize GetEdgeSize(List<PictureBox> list)
+        {
+            var size = new EdgeSize();
+            foreach (PictureBox pb in list)
+            {
+                if (list.IndexOf(pb) == 0)
+                {
+                    size.MinWidth = pb.Location.X;
+                    size.MinHeight = pb.Location.Y;
+                }
+                size.MinWidth = Math.Min(size.MinWidth, pb.Location.X);
+                size.MinHeight = Math.Min(size.MinHeight, pb.Location.Y);
+                size.MaxWidth = Math.Max(size.MaxWidth, pb.Location.X + pb.Image.Width);
+                size.MaxHeight = Math.Max(size.MaxHeight, pb.Location.Y + pb.Image.Height);
+            }
+            return size;
         }
 
         void panelImages_MouseHover(object sender, EventArgs e)
@@ -52,22 +311,6 @@ namespace CssSprite
         {
             panelImages.ResumeLayout(false);
             panelImages.Refresh();
-        }
-
-        private void FormMain_Load(object sender, EventArgs e)
-        {
-            comboBoxBgColor.DataSource = Enum.GetNames(typeof(KnownColor));
-            comboBoxBgColor.Text = "Transparent";
-        }
-
-        void FormMain_Resize(object sender, EventArgs e)
-        {
-            resize();
-        }
-
-        private void resize()
-        {
-            txtCss.Width = txtSass.Width = this.Width-20;
         }
 
 
@@ -87,6 +330,7 @@ namespace CssSprite
                 folderBrowserDialog.SelectedPath = basePath;
                 LoadImages(openFileDialog.FileNames);
                 ButtonVRange_Click(null, EventArgs.Empty);
+                SetBase64();
             }
         }
 
@@ -138,6 +382,7 @@ namespace CssSprite
                     chkBoxPhone.Checked = spriteFile.IsPhone;
                     panelImages.ResumeLayout(false);
                     SetCssText();
+                    SetBase64();
                 }
                 catch (Exception ex)
                 {
@@ -167,6 +412,7 @@ namespace CssSprite
                     img.Tag = imgInfo;
                     _imgList.Add(imgInfo);
                     AddPictureBox(img, 0, 0);
+                    SetBase64();
                 }
             }
         }
@@ -187,6 +433,7 @@ namespace CssSprite
                     }
                     panelImages.Controls.Remove(_selectedPicture);
                     _selectedPicture = null;
+                    SetBase64();
                 }
             }
             else
@@ -271,6 +518,9 @@ namespace CssSprite
             return true;
         }
 
+        /// <summary>
+        /// 选中的单张图片
+        /// </summary>
         private PictureBox _selectedPicture=null;
         private Size _bigSize;
 
@@ -285,6 +535,66 @@ namespace CssSprite
             return "png";
         }
 
+        
+
+        
+        //小图横排点击
+        private void ButtonVRange_Click(object sender, EventArgs e)
+        {
+            if (!AssertFiles()) return;
+            panelImages.Controls.Clear();
+            int left = 0;
+            int top = 0;
+            int currentHeight = 0;
+            foreach (ImageInfo ii in _imgList)
+            {
+                Image img = ii.Image;
+                left = 0;
+                top = currentHeight;
+
+                AddPictureBox(img, left, top);
+                currentHeight += img.Height;
+            }
+            panelImages.ResumeLayout(false);
+            SetCssText();
+        }
+
+        /// <summary>
+        /// 设置css的文本
+        /// </summary>
+        public void SetCssText() {
+            int maxWidth, maxHeight, minHeight, minWidth;
+            maxWidth = maxHeight = minHeight = minWidth = 0;
+            //把所有元素按照0，0点为标准，通过最小向上距离和向左距离平移，获取最大距离
+            foreach (PictureBox pb in panelImages.Controls)
+            {
+                if (panelImages.Controls.GetChildIndex(pb) == 0)
+                {
+                    minWidth = pb.Location.X;
+                    minHeight = pb.Location.Y;
+                }
+                minWidth = Math.Min(minWidth, pb.Location.X);
+                minHeight = Math.Min(minHeight, pb.Location.Y);
+            }
+            foreach (PictureBox pb in panelImages.Controls)
+            {
+                maxWidth = Math.Max(maxWidth, pb.Location.X + pb.Image.Width);
+                maxHeight = Math.Max(maxHeight, pb.Location.Y + pb.Image.Height);
+            }
+
+            _bigSize = new Size(maxWidth, maxHeight);
+            var isPhone = chkBoxPhone.Checked;
+            var sassStr = "@mixin " + txtName.Text + "{background:url(" + txtDir.Text + "/" + txtName.Text + "." + GetImgExt() + ") no-repeat;" + (isPhone ? "background-size:" + _bigSize.Width / 2 + "px " + _bigSize.Height / 2 + "px" : "") + " }" + Environment.NewLine;
+            var cssStr = "." + txtName.Text + "{background:url(" + txtDir.Text + "/" + txtName.Text + "." + GetImgExt() + ")  no-repeat;" + (isPhone ? "background-size:" + _bigSize.Width / 2 + "px " + _bigSize.Height / 2 + "px" : "") + "}" + Environment.NewLine;
+            foreach (PictureBox pb in panelImages.Controls)
+            {
+                sassStr += GetSassCss(pb.Image, pb.Left - minWidth, pb.Top-minHeight);
+                cssStr += GetCss(pb.Image, pb.Left - minWidth, pb.Top - minHeight);
+            }
+            txtSass.Text = sassStr;
+            txtCss.Text = cssStr;
+        }
+
         /// <summary>
         /// 得到sass代码
         /// </summary>
@@ -292,11 +602,12 @@ namespace CssSprite
         /// <param name="left">左边距离</param>
         /// <param name="top">右边距离</param>
         /// <returns></returns>
-        string GetSassCss(Image img, int left, int top) 
+        string GetSassCss(Image img, int left, int top)
         {
             ImageInfo imgInfo = (ImageInfo)img.Tag;
             var isPhone = chkBoxPhone.Checked;
-            if (isPhone) {
+            if (isPhone)
+            {
                 left = left / 2;
                 top = top / 2;
             }
@@ -331,6 +642,57 @@ namespace CssSprite
             return "." + GetCssName(imgInfo.Name) + "{height:" + imgHeight + "px;width:" + imgWidth + "px;background-position:" + _left + " " + _top + ";}" + Environment.NewLine;
         }
 
+        void SetBase64()
+        {
+            string base64Sass = string.Empty;
+            string base64Css = string.Empty;
+            BinaryFormatter binFormatter = new BinaryFormatter();
+            ImageInfo imageInfo;
+            int height, width;
+            var isPhone = chkBoxPhone.Checked;
+            foreach (PictureBox pb in panelImages.Controls)
+            {
+                Bitmap bmp = new Bitmap(pb.Image, pb.Image.Width, pb.Image.Height);
+                imageInfo = (ImageInfo)pb.Image.Tag;
+                MemoryStream memStream = new MemoryStream();
+                ImageFormat format = ImageFormat.Png;
+                switch (Path.GetExtension(imageInfo.FileName))
+                {
+                    case "jpeg":
+                        format = ImageFormat.Jpeg;
+                        break;
+                    case "jpg":
+                        format = ImageFormat.Jpeg;
+                        break;
+                    case "png":
+                        format = ImageFormat.Png;
+                        break;
+                    case "gif":
+                        format = ImageFormat.Gif;
+                        break;
+                    default:
+                        break;
+                }
+                bmp.Save(memStream, format);
+                byte[] arr = new byte[memStream.Length];
+                memStream.Position = 0;
+                memStream.Read(arr, 0, (int)memStream.Length);
+                memStream.Close();
+                height = pb.Image.Height;
+                height = isPhone ? height / 2 : height;
+                width = pb.Image.Width;
+                width = isPhone ? width / 2 : width;
+                base64Sass += "@mixin ";
+                base64Css += ".";
+                var code = GetCssName(imageInfo.Name) + "{height:" + height + "px;width:" + width + "px;background:url(data:image/png;base64," + Convert.ToBase64String(arr) + ") no-repeat}" + Environment.NewLine;
+                base64Sass += code;
+                base64Css += code;
+            }
+
+            txtBase64Sass.Text = base64Sass;
+            txtBase64Css.Text = base64Css;
+        }
+
         string GetCssName(string imgName)
         {
             if (Char.IsNumber(imgName[0]))
@@ -338,53 +700,6 @@ namespace CssSprite
                 return "_" + imgName;
             }
             return imgName;
-        }
-
-        
-        //小图横排点击
-        private void ButtonVRange_Click(object sender, EventArgs e)
-        {
-            if (!AssertFiles()) return;
-            panelImages.Controls.Clear();
-            int left = 0;
-            int top = 0;
-            int currentHeight = 0;
-            foreach (ImageInfo ii in _imgList)
-            {
-                Image img = ii.Image;
-                left = 0;
-                top = currentHeight;
-
-                AddPictureBox(img, left, top);
-                currentHeight += img.Height;
-            }
-            panelImages.ResumeLayout(false);
-            SetCssText();
-        }
-
-        /// <summary>
-        /// 设置css的文本
-        /// </summary>
-        public void SetCssText() {
-            
-            int maxWidth, maxHeight;
-            maxWidth = maxHeight = 0;
-            foreach (PictureBox pb in panelImages.Controls)
-            {
-                maxWidth = Math.Max(maxWidth, pb.Location.X + pb.Image.Width);
-                maxHeight = Math.Max(maxHeight, pb.Location.Y + pb.Image.Height);
-            }
-            _bigSize = new Size(maxWidth, maxHeight);
-            var isPhone = chkBoxPhone.Checked;
-            var sassStr = "@mixin " + txtName.Text + "{background:url(" + txtDir.Text + "/" + txtName.Text + "." + GetImgExt() + ") no-repeat;" + (isPhone ? "background-size:" + _bigSize.Width / 2 + "px " + _bigSize.Height / 2 + "px" : "") + " }" + Environment.NewLine;
-            var cssStr = "." + txtName.Text + "{background:url(" + txtDir.Text + "/" + txtName.Text + "." + GetImgExt() + ")  no-repeat;" + (isPhone ? "background-size:" + _bigSize.Width / 2 + "px " + _bigSize.Height / 2 + "px" : "") + "}" + Environment.NewLine;
-            foreach (PictureBox pb in panelImages.Controls)
-            {
-                sassStr += GetSassCss(pb.Image, pb.Left, pb.Top);
-                cssStr += GetCss(pb.Image, pb.Left, pb.Top);
-            }
-            txtSass.Text = sassStr;
-            txtCss.Text = cssStr;
         }
 
         public string GetImgName(Image img)
@@ -414,12 +729,40 @@ namespace CssSprite
             pb.BorderStyle =BorderStyle.FixedSingle ;
             pb.Name = "pb_" + left + "_" + top;
             pb.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            //pb.Click += pb_Click;
+            pb.Click += pb_Click;
             pb.MouseDown += pb_MouseDown;
             pb.MouseMove += pb_MouseMove;
             pb.MouseUp += pb_MouseUp;
+            //pb.Paint += pb_Paint;
             panelImages.Controls.Add(pb);
             pb.Show();
+        }
+
+        void pb_Click(object sender, EventArgs e)
+        {
+            var p = (PictureBox)sender;
+            p.Tag="1";
+            p.Refresh();
+            panelImages.Focus();
+            _selectedPicture = p;
+        }
+
+        void pb_Paint(object sender, PaintEventArgs e)
+        {
+            PictureBox p = (PictureBox)sender;
+            if (p.Tag!=null && p.Tag.ToString() == "1") 
+            {
+                Pen pp = new Pen(Color.Blue);
+                e.Graphics.DrawRectangle(pp, e.ClipRectangle.X, e.ClipRectangle.Y, e.ClipRectangle.X + e.ClipRectangle.Width - 1, e.ClipRectangle.Y + e.ClipRectangle.Height - 1);
+                foreach (PictureBox pb in panelImages.Controls)
+                {
+                    if (pb != p)
+                    {
+                        pb.Tag = null;
+                        pb.Refresh();
+                    }
+                }
+            }
         }
 
         #region 拖动
@@ -439,8 +782,9 @@ namespace CssSprite
                 int x = Math.Max(0, pb.Location.X + p.X - _dragStartLocation.X);
                 int y = Math.Max(0, pb.Location.Y + p.Y - _dragStartLocation.Y);
                 pb.Location = new Point(x, y);
-                panelImages.ResumeLayout(false);
                 SetCssText();
+                panelImages.ResumeLayout(false);
+                panelImages.Refresh();
             }
         }
 
@@ -448,7 +792,7 @@ namespace CssSprite
         {
             if (e.Button == MouseButtons.Left)
             {
-                _selectedPicture = (PictureBox)sender;
+                
                 _isDragged = true;
                 _dragStartLocation = new Point(e.X, e.Y);
             }
@@ -460,16 +804,6 @@ namespace CssSprite
 
 
         #endregion
-
-        void pb_Click(object sender, EventArgs e)
-        {
-            PictureBox pb = (PictureBox)sender;
-            if (_selectedPicture != null)
-            {
-                _selectedPicture.BorderStyle = BorderStyle.None;
-            }
-            pb.BorderStyle = BorderStyle.FixedSingle;
-        }
 
         private void ButtonMakeBigImageCss_Click(object sender, EventArgs e)
         {
@@ -503,36 +837,22 @@ namespace CssSprite
                 int maxWidth,maxHeight,minWidth,minHeight;
                 maxWidth = maxHeight = minWidth = minHeight = 0;
                 //循环获取距离左边和上边最小距离
-                foreach (PictureBox pb in panelImages.Controls)
-                {
-                    if (panelImages.Controls.GetChildIndex(pb)==0) 
-                    {
-                        minWidth = pb.Location.X;
-                        minHeight = pb.Location.Y;
-                    } 
-                    minWidth = Math.Min(minWidth, pb.Location.X);
-                    minHeight = Math.Min(minHeight, pb.Location.Y);
-                }
-                Color bgColor = GetBgColor();
                 //把所有元素按照0，0点为标准，通过最小向上距离和向左距离平移，获取最大距离
                 foreach (PictureBox pb in panelImages.Controls)
                 {
-                    var point = new Point(pb.Location.X, pb.Location.Y);
-                    if (minHeight != 0)
+                    if (panelImages.Controls.GetChildIndex(pb) == 0)
                     {
-                        point.Y = pb.Location.Y - minHeight;
+                        minWidth = pb.Location.X;
+                        minHeight = pb.Location.Y;
                     }
-                    if (minWidth != 0)
-                    {
-                        point.X = pb.Location.X - minWidth;
-                    }
-                    pb.Location = point;
+                    minWidth = Math.Min(minWidth, pb.Location.X);
+                    minHeight = Math.Min(minHeight, pb.Location.Y);
                     maxWidth = Math.Max(maxWidth, pb.Location.X + pb.Image.Width);
                     maxHeight = Math.Max(maxHeight, pb.Location.Y + pb.Image.Height);
                 }
                 Size imgSize = new Size(maxWidth, maxHeight);
                 var codeMime = string.Empty;
-                using (Bitmap bigImg = new Bitmap(imgSize.Width, imgSize.Height, PixelFormat.Format32bppArgb))
+                using (Bitmap bigImg = new Bitmap(imgSize.Width-minWidth, imgSize.Height-minHeight, PixelFormat.Format32bppArgb))
                 {
                     string imgType = GetImgExt();
                     ImageFormat format = ImageFormat.Png;
@@ -568,10 +888,11 @@ namespace CssSprite
                         g.SmoothingMode = SmoothingMode.HighQuality;
                         g.InterpolationMode = InterpolationMode.HighQualityBicubic;
 
-                        if (bgColor == Color.Transparent && (format == ImageFormat.Jpeg|| format == ImageFormat.Gif)) g.Clear(Color.White);
-                        else g.Clear(bgColor);
+                        if ((format == ImageFormat.Jpeg)) g.Clear(Color.White);
+                        else g.Clear(Color.Transparent);
                         
                         SetCssText();
+                        SetBase64();
                         var sprite = new SpriteFile() { CssFileName = txtDir.Text, ImageName = txtName.Text, SpriteList = new List<Sprite>(), IsPhone = chkBoxPhone.Checked };                        
                         try
                         {
@@ -581,7 +902,7 @@ namespace CssSprite
                                 var path = img.FileName;
                                 Sprite s = new Sprite() { LocationY = pb.Location.Y, LocationX = pb.Location.X, Path = Path.GetFileName(path) };
                                 sprite.SpriteList.Add(s);
-                                g.DrawImage(pb.Image, pb.Location.X, pb.Location.Y, pb.Image.Width, pb.Image.Height);
+                                g.DrawImage(pb.Image, pb.Location.X - minWidth, pb.Location.Y - minHeight, pb.Image.Width, pb.Image.Height);
                                 if (Path.GetDirectoryName(path) != folderBrowserDialog.SelectedPath)
                                 {
                                     File.Copy(path, folderBrowserDialog.SelectedPath + "\\" + Path.GetFileName(path), false);
@@ -610,15 +931,15 @@ namespace CssSprite
         }
 
 
-        protected override bool IsInputChar(char charCode)
-        {
-            if (charCode == (char)Keys.Left || charCode == (char)Keys.Right || charCode == (char)Keys.Up || charCode == (char)Keys.Down)
-            {
-                return true;
-            }
+        //protected override bool IsInputChar(char charCode)
+        //{
+            //if (charCode == (char)Keys.Left || charCode == (char)Keys.Right || charCode == (char)Keys.Up || charCode == (char)Keys.Down)
+            //{
+            //    return true;
+            //}
 
-            return base.IsInputChar(charCode);
-        }
+            //return base.IsInputChar(charCode);
+        //}
 
         
 
@@ -634,83 +955,11 @@ namespace CssSprite
             return false;
         }
 
-        
-
-
-        /// <summary>
-        /// 获取颜色
-        /// </summary>
-        /// <returns></returns>
-        Color GetBgColor()
-        {
-            Color bgColor = Color.Transparent;
-            string strBgColor = comboBoxBgColor.Text;
-            if (!string.IsNullOrEmpty(strBgColor))
-            {
-                string[] knownColors = Enum.GetNames(typeof(KnownColor));
-                bool isKnownColor = false;
-                foreach (string kc in knownColors)
-                {
-                    if (kc == strBgColor)
-                    {
-                        isKnownColor = true;
-                        break;
-                    }
-                }
-                if (isKnownColor)
-                    bgColor = Color.FromKnownColor((KnownColor)Enum.Parse(typeof(KnownColor), strBgColor));
-                else
-                {
-                    Regex regex = new Regex("#[0-9abcdef]{6}", RegexOptions.IgnoreCase);
-                    if (regex.IsMatch(strBgColor))
-                    {
-                        int red = int.Parse(strBgColor.Substring(1, 2),NumberStyles.AllowHexSpecifier);
-                        int green = int.Parse(strBgColor.Substring(3, 2), NumberStyles.AllowHexSpecifier);
-                        int blue = int.Parse(strBgColor.Substring(5, 2), NumberStyles.AllowHexSpecifier);
-                        bgColor = Color.FromArgb(red,green,blue);
-                    }
-                    else {
-                        bgColor = Color.Transparent;
-                    }
-                }
-            }
-            return bgColor;
-        }
-
-        private void comboBoxBgColor_Changed(object sender, EventArgs e)
-        {
-            Color bgColor = GetBgColor();
-            if (bgColor == Color.Transparent)
-            {
-                bgColor = Color.White;
-            }
-
-            panelImages.BackColor = bgColor;
-        }
-
         private void txtSass_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.A && e.Control) { txtSass.SelectAll(); }   
         }
 
-        private void radioButton2_CheckedChanged(object sender, EventArgs e)
-        {
-            var radio = sender as RadioButton;
-            if (radio.Checked) {
-                txtCss.Visible = false;
-                txtSass.Visible = true;
-            }
-        }
-
-        private void radioBtnCss_CheckedChanged(object sender, EventArgs e)
-        {
-            var radio = sender as RadioButton;
-            if (radio.Checked)
-            {
-                txtCss.Visible = true;
-                txtSass.Visible = false;
-            }
-        }
 
         private void txtDir_TextChanged(object sender, EventArgs e)
         {
@@ -749,6 +998,26 @@ namespace CssSprite
         {
             AboutUs a=new AboutUs();
             a.ShowDialog();
+        }
+
+        private void txtCss_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.A && e.Control) { txtCss.SelectAll(); }  
+        }
+
+        private void txtBase64Sass_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.A && e.Control) { txtBase64Sass.SelectAll(); }  
+        }
+
+        private void txtBase64Css_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.A && e.Control) { txtBase64Css.SelectAll(); }  
+        }
+
+        private void comboBoxImgType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            SetCssText();
         }
     }
 }
