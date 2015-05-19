@@ -52,11 +52,6 @@
             this.buttonHRange = new System.Windows.Forms.Button();
             this.buttonMakeBigImageCss = new System.Windows.Forms.Button();
             this.panelBottom = new System.Windows.Forms.Panel();
-            this.panelPhone = new System.Windows.Forms.Panel();
-            this.label4 = new System.Windows.Forms.Label();
-            this.comboBoxFigure = new System.Windows.Forms.ComboBox();
-            this.comboBoxUnit = new System.Windows.Forms.ComboBox();
-            this.label3 = new System.Windows.Forms.Label();
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tabPage2 = new System.Windows.Forms.TabPage();
@@ -67,9 +62,13 @@
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panelImages = new System.Windows.Forms.Panel();
+            this.panelPhone = new System.Windows.Forms.Panel();
+            this.linkLabelHelp = new System.Windows.Forms.LinkLabel();
+            this.label3 = new System.Windows.Forms.Label();
+            this.linkLabelSass = new System.Windows.Forms.LinkLabel();
+            this.linkLabelLess = new System.Windows.Forms.LinkLabel();
             this.panelTop.SuspendLayout();
             this.panelBottom.SuspendLayout();
-            this.panelPhone.SuspendLayout();
             this.tabControl.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -77,6 +76,7 @@
             this.tabPage4.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
+            this.panelPhone.SuspendLayout();
             this.SuspendLayout();
             // 
             // openFileDialog
@@ -358,66 +358,6 @@
             this.panelBottom.Size = new System.Drawing.Size(1002, 231);
             this.panelBottom.TabIndex = 0;
             // 
-            // panelPhone
-            // 
-            this.panelPhone.Controls.Add(this.label4);
-            this.panelPhone.Controls.Add(this.comboBoxFigure);
-            this.panelPhone.Controls.Add(this.comboBoxUnit);
-            this.panelPhone.Controls.Add(this.label3);
-            this.panelPhone.Location = new System.Drawing.Point(106, 60);
-            this.panelPhone.Name = "panelPhone";
-            this.panelPhone.Size = new System.Drawing.Size(435, 28);
-            this.panelPhone.TabIndex = 22;
-            this.panelPhone.Visible = false;
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(212, 9);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(89, 12);
-            this.label4.TabIndex = 2;
-            this.label4.Text = "图片缩小比例：";
-            // 
-            // comboBoxFigure
-            // 
-            this.comboBoxFigure.ForeColor = System.Drawing.Color.RoyalBlue;
-            this.comboBoxFigure.FormattingEnabled = true;
-            this.comboBoxFigure.Items.AddRange(new object[] {
-            "2",
-            "3",
-            "1"});
-            this.comboBoxFigure.Location = new System.Drawing.Point(305, 6);
-            this.comboBoxFigure.Name = "comboBoxFigure";
-            this.comboBoxFigure.Size = new System.Drawing.Size(121, 20);
-            this.comboBoxFigure.TabIndex = 1;
-            this.comboBoxFigure.Text = "2";
-            this.comboBoxFigure.SelectedIndexChanged += new System.EventHandler(this.comboBoxFigure_SelectedIndexChanged);
-            // 
-            // comboBoxUnit
-            // 
-            this.comboBoxUnit.ForeColor = System.Drawing.Color.RoyalBlue;
-            this.comboBoxUnit.FormattingEnabled = true;
-            this.comboBoxUnit.Items.AddRange(new object[] {
-            "rem",
-            "em",
-            "px"});
-            this.comboBoxUnit.Location = new System.Drawing.Point(85, 4);
-            this.comboBoxUnit.Name = "comboBoxUnit";
-            this.comboBoxUnit.Size = new System.Drawing.Size(121, 20);
-            this.comboBoxUnit.TabIndex = 1;
-            this.comboBoxUnit.Text = "rem";
-            this.comboBoxUnit.SelectedIndexChanged += new System.EventHandler(this.comboBoxUnit_SelectedIndexChanged);
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(2, 9);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(77, 12);
-            this.label3.TabIndex = 0;
-            this.label3.Text = "手机端单位：";
-            // 
             // tabControl
             // 
             this.tabControl.Controls.Add(this.tabPage1);
@@ -449,7 +389,7 @@
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage2.Size = new System.Drawing.Size(985, 107);
             this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "css代码";
+            this.tabPage2.Text = "css/less代码";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
             // tabPage3
@@ -542,6 +482,60 @@
             this.panelImages.Size = new System.Drawing.Size(1002, 242);
             this.panelImages.TabIndex = 0;
             // 
+            // panelPhone
+            // 
+            this.panelPhone.Controls.Add(this.label3);
+            this.panelPhone.Controls.Add(this.linkLabelLess);
+            this.panelPhone.Controls.Add(this.linkLabelSass);
+            this.panelPhone.Controls.Add(this.linkLabelHelp);
+            this.panelPhone.Location = new System.Drawing.Point(106, 60);
+            this.panelPhone.Name = "panelPhone";
+            this.panelPhone.Size = new System.Drawing.Size(435, 28);
+            this.panelPhone.TabIndex = 22;
+            this.panelPhone.Visible = false;
+            // 
+            // linkLabelHelp
+            // 
+            this.linkLabelHelp.AutoSize = true;
+            this.linkLabelHelp.Location = new System.Drawing.Point(50, 9);
+            this.linkLabelHelp.Name = "linkLabelHelp";
+            this.linkLabelHelp.Size = new System.Drawing.Size(143, 12);
+            this.linkLabelHelp.TabIndex = 0;
+            this.linkLabelHelp.TabStop = true;
+            this.linkLabelHelp.Text = "手机端页面rem自适应脚本";
+            this.linkLabelHelp.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelHelp_LinkClicked);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(2, 9);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(41, 12);
+            this.label3.TabIndex = 1;
+            this.label3.Text = "帮助：";
+            // 
+            // linkLabelSass
+            // 
+            this.linkLabelSass.AutoSize = true;
+            this.linkLabelSass.Location = new System.Drawing.Point(208, 9);
+            this.linkLabelSass.Name = "linkLabelSass";
+            this.linkLabelSass.Size = new System.Drawing.Size(77, 12);
+            this.linkLabelSass.TabIndex = 0;
+            this.linkLabelSass.TabStop = true;
+            this.linkLabelSass.Text = "Sass变量合集";
+            this.linkLabelSass.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelSass_LinkClicked);
+            // 
+            // linkLabelLess
+            // 
+            this.linkLabelLess.AutoSize = true;
+            this.linkLabelLess.Location = new System.Drawing.Point(303, 9);
+            this.linkLabelLess.Name = "linkLabelLess";
+            this.linkLabelLess.Size = new System.Drawing.Size(77, 12);
+            this.linkLabelLess.TabIndex = 0;
+            this.linkLabelLess.TabStop = true;
+            this.linkLabelLess.Text = "Less变量合集";
+            this.linkLabelLess.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelLess_LinkClicked);
+            // 
             // FormMain
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -555,8 +549,6 @@
             this.panelTop.ResumeLayout(false);
             this.panelBottom.ResumeLayout(false);
             this.panelBottom.PerformLayout();
-            this.panelPhone.ResumeLayout(false);
-            this.panelPhone.PerformLayout();
             this.tabControl.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
@@ -568,6 +560,8 @@
             this.tabPage4.PerformLayout();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
+            this.panelPhone.ResumeLayout(false);
+            this.panelPhone.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -608,10 +602,10 @@
         private System.Windows.Forms.TextBox txtBase64Sass;
         private System.Windows.Forms.TextBox txtBase64Css;
         private System.Windows.Forms.Panel panelPhone;
-        private System.Windows.Forms.ComboBox comboBoxUnit;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.ComboBox comboBoxFigure;
+        private System.Windows.Forms.LinkLabel linkLabelHelp;
+        private System.Windows.Forms.LinkLabel linkLabelLess;
+        private System.Windows.Forms.LinkLabel linkLabelSass;
     }
 }
 

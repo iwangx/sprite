@@ -22,7 +22,7 @@ namespace CssSprite
         /// <summary>
         /// 版本号
         /// </summary>
-        public const string CurentVersion = "4.0.0.0";
+        public const string CurentVersion = "4.2.0.0";
 
         /// <summary>
         /// 服务器地址
@@ -64,8 +64,6 @@ namespace CssSprite
             thread = new Thread(th);
             thread.Start();
             comboBoxImgType.DropDownStyle = ComboBoxStyle.DropDownList;
-            comboBoxUnit.DropDownStyle = ComboBoxStyle.DropDownList;
-            comboBoxFigure.DropDownStyle = ComboBoxStyle.DropDownList;
         }
 
         void panelImages_LostFocus(object sender, EventArgs e)
@@ -381,8 +379,6 @@ namespace CssSprite
                     txtDir.Text = spriteFile.CssFileName;
                     txtName.Text = spriteFile.ImageName;
                     chkBoxPhone.Checked = spriteFile.IsPhone;
-                    comboBoxUnit.Text = spriteFile.PhoneUnit == null ? "rem" : spriteFile.PhoneUnit;
-                    comboBoxFigure.Text = spriteFile.PhoneFigure == null ? "2" : spriteFile.PhoneFigure;
                     comboBoxImgType.Text = spriteFile.SpriteImgFileType == null ? "png" : spriteFile.SpriteImgFileType;
                     panelImages.ResumeLayout(false);
                     SetCssText();
@@ -587,22 +583,24 @@ namespace CssSprite
 
             _bigSize = new Size(maxWidth, maxHeight);
             var isPhone = chkBoxPhone.Checked;
-            var phoneTmpStr =  txtName.Text +
-                    "{background:url(" + txtDir.Text + "/" + txtName.Text + "." + GetImgExt() + ") no-repeat;"
-                    + "background-size:" + _bigSize.Width / int.Parse(comboBoxFigure.Text) + comboBoxUnit.Text + " " + _bigSize.Height / int.Parse(comboBoxFigure.Text) + comboBoxUnit.Text + " }" + Environment.NewLine;
-            var tmpStr = txtName.Text + "{background:url(" + txtDir.Text + "/" + txtName.Text + "." + GetImgExt() + ") no-repeat;}" + Environment.NewLine;
+            //var phoneTmpStr = "{0}"+txtName.Text + "[background:url(" + txtDir.Text + "/" + txtName.Text + "." + GetImgExt() + ") no-repeat; ]" + Environment.NewLine;
+            var tmpStr = "{0}"+txtName.Text + "[background:url(" + txtDir.Text + "/" + txtName.Text + "." + GetImgExt() + ") no-repeat;]" + Environment.NewLine;
 
             var sassStr = string.Empty;
             var cssStr = string.Empty;
+            /*
             if (isPhone)
             {
-                sassStr = "@mixin " + phoneTmpStr;
-                cssStr = "." + phoneTmpStr;
+                sassStr = String.Format(tmpStr, "@mixin ").Replace("[", "{").Replace("]", "}");
+                cssStr = String.Format(tmpStr, ".").Replace("[", "{").Replace("]", "}");
             }
             else {
                 sassStr = "@mixin " + tmpStr;
                 cssStr = "." + tmpStr;
             }
+            */
+            sassStr = String.Format(tmpStr, "@mixin ").Replace("[", "{").Replace("]", "}");
+            cssStr = String.Format(tmpStr, ".").Replace("[", "{").Replace("]", "}");
             
             foreach (PictureBox pb in panelImages.Controls)
             {
@@ -625,33 +623,36 @@ namespace CssSprite
             ImageInfo imgInfo = (ImageInfo)img.Tag;
             var isPhone = chkBoxPhone.Checked;
             var unit = "px";
+            var sassPrefix = string.Empty;
+            var lessPrefix = string.Empty;
             if (isPhone)
             {
-                left = left / int.Parse(comboBoxFigure.Text);
-                top = top / int.Parse(comboBoxFigure.Text);
-                unit = comboBoxUnit.Text;
+                unit = "";
+                lessPrefix  = "@_";
+                sassPrefix = "$_";
             }
             var _left = string.Empty;
             var _top = string.Empty;
-            if (isSass)
+            
+            if (isSass || isPhone)
             {
-                _left = left == 0 ? "0" : "0 " + (0 - left).ToString() + unit;
-                _top = top == 0 ? "0" : "0 " + (0 - top).ToString() + unit;
+                _left = left == 0 ? "0" : "0 " + "-{2}" + left.ToString() + unit;
+                _top = top == 0 ? "0" : "0 " + "-{2}" + top.ToString() + unit;
             }
             else {
-                _left = left == 0 ? "0" :  (0 - left).ToString() + unit;
+                _left = left == 0 ? "0" : (0 - left).ToString() + unit;
                 _top = top == 0 ? "0" : (0 - top).ToString() + unit;
             }
-            var imgHeight = isPhone ? img.Height / int.Parse(comboBoxFigure.Text) : img.Height;
-            var imgWidth = isPhone ? img.Width / int.Parse(comboBoxFigure.Text) : img.Width;
-            var str= GetCssName(imgInfo.Name) + "{height:" + imgHeight + unit+";width:" + imgWidth + unit+";" + "background-position: " + _left + " " + _top + ";}" + Environment.NewLine;
+            var imgHeight = isPhone ? img.Height.ToString()  : img.Height.ToString()+unit;
+            var imgWidth = isPhone ? img.Width.ToString() : img.Width.ToString() + unit;
+            var str = "{0}" + GetCssName(imgInfo.Name) + "[height:{1}" + imgHeight  + ";width:{1}" + imgWidth  + ";" + "background-position:" + _left + " " + _top + ";]" + Environment.NewLine;
             if (isSass)
             {
-                return "@mixin " + str;
+                return String.Format(str, "@mixin ", sassPrefix, sassPrefix).Replace("[", "{").Replace("]", "}");
             }
             else 
             {
-                return "." + str;
+                return String.Format(str, ".", lessPrefix, lessPrefix).Replace("[", "{").Replace("]", "}");
             }
         }
 
@@ -663,6 +664,17 @@ namespace CssSprite
             ImageInfo imageInfo;
             int height, width;
             var isPhone = chkBoxPhone.Checked;
+            var unit = "px";
+            var sassPrefix = string.Empty;
+            var lessPrefix = string.Empty;
+            if (isPhone)
+            {
+                unit = "rem";
+                lessPrefix = "@_";
+                sassPrefix = "$_";
+            }
+            var _height = string.Empty;
+            var _width = string.Empty;
             foreach (PictureBox pb in panelImages.Controls)
             {
                 Bitmap bmp = new Bitmap(pb.Image, pb.Image.Width, pb.Image.Height);
@@ -692,14 +704,16 @@ namespace CssSprite
                 memStream.Read(arr, 0, (int)memStream.Length);
                 memStream.Close();
                 height = pb.Image.Height;
-                height = isPhone ? height / 2 : height;
+                //height = isPhone ? height / 2 : height;
                 width = pb.Image.Width;
-                width = isPhone ? width / 2 : width;
+                //width = isPhone ? width / 2 : width;
+                _height = height == 0 ? "0" : "{0}" + height.ToString() + unit;
+                _width = width == 0 ? "0" : "{0}" + width.ToString() + unit;
                 base64Sass += "@mixin ";
                 base64Css += ".";
-                var code = GetCssName(imageInfo.Name) + "{height:" + height + "px;width:" + width + "px;background:url(data:image/png;base64," + Convert.ToBase64String(arr) + ") no-repeat}" + Environment.NewLine;
-                base64Sass += code;
-                base64Css += code;
+                var code = GetCssName(imageInfo.Name) + "[height:" + _height + ";width:" + _width + ";background:url(data:image/png;base64," + Convert.ToBase64String(arr) + ") no-repeat]" + Environment.NewLine;
+                base64Sass += String.Format(code, sassPrefix).Replace("[", "{").Replace("]", "}");
+                base64Css += String.Format(code, lessPrefix).Replace("[", "{").Replace("]", "}");
             }
 
             txtBase64Sass.Text = base64Sass;
@@ -805,7 +819,6 @@ namespace CssSprite
         {
             if (e.Button == MouseButtons.Left)
             {
-                
                 _isDragged = true;
                 _dragStartLocation = new Point(e.X, e.Y);
             }
@@ -904,8 +917,6 @@ namespace CssSprite
                             ImageName = txtName.Text,
                             SpriteList = new List<Sprite>(), 
                             IsPhone = chkBoxPhone.Checked,
-                            PhoneFigure=comboBoxFigure.Text,
-                            PhoneUnit=comboBoxUnit.Text,
                             SpriteImgFileType = comboBoxImgType.Text
                         };                        
                         try
@@ -1002,6 +1013,7 @@ namespace CssSprite
             }
             
             SetCssText();
+            SetBase64();
         }
 
         private void btn_Click(object sender, EventArgs e)
@@ -1030,14 +1042,19 @@ namespace CssSprite
             SetCssText();
         }
 
-        private void comboBoxUnit_SelectedIndexChanged(object sender, EventArgs e)
+        private void linkLabelHelp_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            SetCssText();
+            Process.Start("http://www.cnblogs.com/wang4517/archive/2015/05/19/4514862.html");
         }
 
-        private void comboBoxFigure_SelectedIndexChanged(object sender, EventArgs e)
+        private void linkLabelSass_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            SetCssText();
+            Process.Start("https://csssprite.herokuapp.com/sassVar");
+        }
+
+        private void linkLabelLess_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Process.Start("https://csssprite.herokuapp.com/lessVar");
         }
     }
 }
