@@ -24,6 +24,21 @@ namespace CssSprite
         private bool _isPhone;
 
         /// <summary>
+        /// 手机端单位
+        /// </summary>
+        private string _phoneUnit;
+
+        /// <summary>
+        /// 手机端缩小比例
+        /// </summary>
+        private string _phoneFigure;
+
+        /// <summary>
+        /// 雪碧图文件类型
+        /// </summary>
+        private string _spriteImgFileType;
+
+        /// <summary>
         /// 图片列表（路径，X,Y）
         /// </summary>
         private List<Sprite> _spriteList;
@@ -47,6 +62,27 @@ namespace CssSprite
         {
             get { return _isPhone; }
             set { _isPhone = value; }
+        }
+
+        [XmlAttribute("PhoneFigure")]
+        public string PhoneFigure
+        {
+            get { return _phoneFigure; }
+            set { _phoneFigure = value; }
+        }
+
+        [XmlAttribute("PhoneUnit")]
+        public string PhoneUnit
+        {
+            get { return _phoneUnit; }
+            set { _phoneUnit = value; }
+        }
+
+        [XmlAttribute("SpriteImgFileType")]
+        public string SpriteImgFileType
+        {
+            get { return _spriteImgFileType; }
+            set { _spriteImgFileType = value; }
         }
 
         [XmlArray("SpriteList")]
