@@ -22,7 +22,7 @@ namespace CssSprite
         /// <summary>
         /// 版本号
         /// </summary>
-        public const string CurentVersion = "4.2.0.0";
+        public const string CurentVersion = "4.3.0.0";
 
         /// <summary>
         /// 服务器地址
@@ -283,6 +283,11 @@ namespace CssSprite
             g.DrawRectangle(pen, size.MinWidth, size.MinHeight, size.MaxWidth - size.MinWidth, size.MaxHeight - size.MinHeight);
         }
 
+        /// <summary>
+        ///获取最大最小尺寸
+        /// </summary>
+        /// <param name="list"></param>
+        /// <returns></returns>
         private EdgeSize GetEdgeSize(List<PictureBox> list)
         {
             var size = new EdgeSize();
@@ -523,8 +528,6 @@ namespace CssSprite
         /// 选中的单张图片
         /// </summary>
         private PictureBox _selectedPicture=null;
-        private Size _bigSize;
-
 
         string GetImgExt()
         {
@@ -562,50 +565,33 @@ namespace CssSprite
         /// 设置css的文本
         /// </summary>
         public void SetCssText() {
-            int maxWidth, maxHeight, minHeight, minWidth;
-            maxWidth = maxHeight = minHeight = minWidth = 0;
-            //把所有元素按照0，0点为标准，通过最小向上距离和向左距离平移，获取最大距离
-            foreach (PictureBox pb in panelImages.Controls)
+            var _list=new List<PictureBox>();
+             foreach (PictureBox pb in panelImages.Controls)
             {
-                if (panelImages.Controls.GetChildIndex(pb) == 0)
-                {
-                    minWidth = pb.Location.X;
-                    minHeight = pb.Location.Y;
-                }
-                minWidth = Math.Min(minWidth, pb.Location.X);
-                minHeight = Math.Min(minHeight, pb.Location.Y);
+                _list.Add(pb);
             }
-            foreach (PictureBox pb in panelImages.Controls)
-            {
-                maxWidth = Math.Max(maxWidth, pb.Location.X + pb.Image.Width);
-                maxHeight = Math.Max(maxHeight, pb.Location.Y + pb.Image.Height);
-            }
-
-            _bigSize = new Size(maxWidth, maxHeight);
+            var edgeSize = GetEdgeSize(_list);
             var isPhone = chkBoxPhone.Checked;
-            //var phoneTmpStr = "{0}"+txtName.Text + "[background:url(" + txtDir.Text + "/" + txtName.Text + "." + GetImgExt() + ") no-repeat; ]" + Environment.NewLine;
-            var tmpStr = "{0}"+txtName.Text + "[background:url(" + txtDir.Text + "/" + txtName.Text + "." + GetImgExt() + ") no-repeat;]" + Environment.NewLine;
+            var tmpStr = "{0}"+txtName.Text + "[background:url(" + txtDir.Text + "/" + txtName.Text + "." + GetImgExt() + ") no-repeat {1};]" + Environment.NewLine;
 
             var sassStr = string.Empty;
             var cssStr = string.Empty;
-            /*
-            if (isPhone)
+
+            if (chkBoxPhone.Checked)
             {
-                sassStr = String.Format(tmpStr, "@mixin ").Replace("[", "{").Replace("]", "}");
-                cssStr = String.Format(tmpStr, ".").Replace("[", "{").Replace("]", "}");
+                chkBoxPhone_CheckedChanged(null, EventArgs.Empty);
+                sassStr = String.Format(tmpStr, "@mixin ", ";background-size:$_" + (edgeSize.MaxWidth - edgeSize.MinWidth) + " $_" + (edgeSize.MaxHeight - edgeSize.MinHeight)).Replace("[", "{").Replace("]", "}");
+                cssStr = String.Format(tmpStr, ".", ";background-size:@_" + (edgeSize.MaxWidth - edgeSize.MinWidth) + " $_" + (edgeSize.MaxHeight - edgeSize.MinHeight)).Replace("[", "{").Replace("]", "}");
             }
             else {
-                sassStr = "@mixin " + tmpStr;
-                cssStr = "." + tmpStr;
+                sassStr = String.Format(tmpStr, "@mixin ","").Replace("[", "{").Replace("]", "}");
+                cssStr = String.Format(tmpStr, ".","").Replace("[", "{").Replace("]", "}");
             }
-            */
-            sassStr = String.Format(tmpStr, "@mixin ").Replace("[", "{").Replace("]", "}");
-            cssStr = String.Format(tmpStr, ".").Replace("[", "{").Replace("]", "}");
             
             foreach (PictureBox pb in panelImages.Controls)
             {
-                sassStr += GetSassCss(pb.Image, pb.Left - minWidth, pb.Top-minHeight,true);
-                cssStr += GetSassCss(pb.Image, pb.Left - minWidth, pb.Top - minHeight,false);
+                sassStr += GetSassCss(pb.Image, pb.Left - edgeSize.MinWidth, pb.Top - edgeSize.MinHeight, true);
+                cssStr += GetSassCss(pb.Image, pb.Left - edgeSize.MinWidth, pb.Top - edgeSize.MinHeight, false);
             }
             txtSass.Text = sassStr;
             txtCss.Text = cssStr;
@@ -1002,18 +988,115 @@ namespace CssSprite
             SetCssText();
         }
 
+        List<PictureBox> _list ;
         private void chkBoxPhone_CheckedChanged(object sender, EventArgs e)
         {
             if (chkBoxPhone.Checked)
             {
                 panelPhone.Visible = true;
+                _list = new List<PictureBox>();
+                foreach (PictureBox pb in panelImages.Controls)
+                {
+                    _list.Add(pb);
+                }
+                //按照Y轴排序
+                for (int i = 0; i < _list.Count; i++)
+                {
+                    for (int j = 0; j < _list.Count; j++)
+                    {
+                        if (_list[i].Location.Y < _list[j].Location.Y)
+                        {
+                            var temp = _list[i];
+                            _list[i] = _list[j];
+                            _list[j] = temp;
+                        }
+                    }
+                }
+                var left = 0;
+                var preY = 0;
+                var edgeSize = GetEdgeSize(_list);
+                for (var i = 0; i < _list.Count; i++) {
+                    var item=_list[i];
+                    var preItem=i>0?_list[i-1]:null;
+                    if (edgeSize.MinHeight != item.Location.Y)
+                    {
+                        if (preY == 0) {
+                            preY = preItem.Location.Y;
+                        }
+                        if (preY + preItem.Height - item.Location.Y == 2)
+                        {
+                            preY = item.Location.Y;
+                            var _left = item.Location.Y + left;
+                            item.Location = new Point(item.Location.X, _left);
+                        }
+                    }
+                    left++;
+                }
+                //按照X排序
+                for (int i = 0; i < _list.Count; i++)
+                {
+                    for (int j = 0; j < _list.Count; j++)
+                    {
+                        if (_list[i].Location.X < _list[j].Location.X)
+                        {
+                            var temp = _list[i];
+                            _list[i] = _list[j];
+                            _list[j] = temp;
+                        }
+                    }
+                }
+                var top = 0;
+                var preX = 0;
+                for (var i = 0; i < _list.Count; i++)
+                {
+                    var item = _list[i];
+                    var preItem = i > 0 ? _list[i - 1] : null;
+                    if (edgeSize.MinWidth != item.Location.X)
+                    {
+                        if (preX == 0)
+                        {
+                            preX = preItem.Location.X;
+                        }
+                        if (preX + preItem.Width - item.Location.X == 2)
+                        {
+                            preX = item.Location.X;
+                            var _top = item.Location.X + top;
+                            item.Location = new Point(_top, item.Location.Y);
+                        }
+                    }
+                    top++;
+                }
             }
-            else {
+            else
+            {
                 panelPhone.Visible = false;
             }
-            
-            SetCssText();
-            SetBase64();
+            if (sender != null) {
+                SetCssText();
+                SetBase64();
+            }
+        }
+
+        private void SetMargin(PictureBox pictureBox)
+        {
+            var locationPiont = new Point(pictureBox.Location.X, pictureBox.Location.Y);
+            foreach (PictureBox pb in _list)
+            {                if (pictureBox.Location.X - (pb.Location.X + pb.Width) == -2 && pictureBox.Location.Y == pb.Location.Y)  
+                {
+                    
+                    if (locationPiont.X > 0)
+                    {
+                        locationPiont.X++;
+                    }
+                }
+                if (pictureBox.Location.Y- (pb.Location.Y + pb.Height) == -2 && pictureBox.Location.X == pb.Location.X) {
+                    if (locationPiont.Y > 0)
+                    {
+                        locationPiont.Y++;
+                    }
+                } 
+            }
+            pictureBox.Location = locationPiont;
         }
 
         private void btn_Click(object sender, EventArgs e)
