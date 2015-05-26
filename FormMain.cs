@@ -22,7 +22,7 @@ namespace CssSprite
         /// <summary>
         /// 版本号
         /// </summary>
-        public const string CurentVersion = "4.0.0.0";
+        public const string CurentVersion = "4.3.0.0";
 
         /// <summary>
         /// 服务器地址
@@ -68,7 +68,6 @@ namespace CssSprite
 
         void panelImages_LostFocus(object sender, EventArgs e)
         {
-            _selectedPicture = null;
             list = null; 
         }
 
@@ -284,6 +283,11 @@ namespace CssSprite
             g.DrawRectangle(pen, size.MinWidth, size.MinHeight, size.MaxWidth - size.MinWidth, size.MaxHeight - size.MinHeight);
         }
 
+        /// <summary>
+        ///获取最大最小尺寸
+        /// </summary>
+        /// <param name="list"></param>
+        /// <returns></returns>
         private EdgeSize GetEdgeSize(List<PictureBox> list)
         {
             var size = new EdgeSize();
@@ -362,7 +366,7 @@ namespace CssSprite
                         {
                             Image img = Image.FromFile(path);
                             string imgName = Path.GetFileNameWithoutExtension(s.Path);
-                            ImageInfo imgInfo = new ImageInfo(img, imgName, s.Path);
+                            ImageInfo imgInfo = new ImageInfo(img, imgName, path);
                             img.Tag = imgInfo;
                             _imgList.Add(imgInfo);
                             AddPictureBox(img, s.LocationX, s.LocationY);
@@ -380,6 +384,7 @@ namespace CssSprite
                     txtDir.Text = spriteFile.CssFileName;
                     txtName.Text = spriteFile.ImageName;
                     chkBoxPhone.Checked = spriteFile.IsPhone;
+                    comboBoxImgType.Text = spriteFile.SpriteImgFileType == null ? "png" : spriteFile.SpriteImgFileType;
                     panelImages.ResumeLayout(false);
                     SetCssText();
                     SetBase64();
@@ -433,6 +438,7 @@ namespace CssSprite
                     }
                     panelImages.Controls.Remove(_selectedPicture);
                     _selectedPicture = null;
+                    SetCssText();
                     SetBase64();
                 }
             }
@@ -522,8 +528,6 @@ namespace CssSprite
         /// 选中的单张图片
         /// </summary>
         private PictureBox _selectedPicture=null;
-        private Size _bigSize;
-
 
         string GetImgExt()
         {
@@ -534,8 +538,6 @@ namespace CssSprite
             }
             return "png";
         }
-
-        
 
         
         //小图横排点击
@@ -563,33 +565,33 @@ namespace CssSprite
         /// 设置css的文本
         /// </summary>
         public void SetCssText() {
-            int maxWidth, maxHeight, minHeight, minWidth;
-            maxWidth = maxHeight = minHeight = minWidth = 0;
-            //把所有元素按照0，0点为标准，通过最小向上距离和向左距离平移，获取最大距离
-            foreach (PictureBox pb in panelImages.Controls)
+            var _list=new List<PictureBox>();
+             foreach (PictureBox pb in panelImages.Controls)
             {
-                if (panelImages.Controls.GetChildIndex(pb) == 0)
-                {
-                    minWidth = pb.Location.X;
-                    minHeight = pb.Location.Y;
-                }
-                minWidth = Math.Min(minWidth, pb.Location.X);
-                minHeight = Math.Min(minHeight, pb.Location.Y);
+                _list.Add(pb);
             }
-            foreach (PictureBox pb in panelImages.Controls)
-            {
-                maxWidth = Math.Max(maxWidth, pb.Location.X + pb.Image.Width);
-                maxHeight = Math.Max(maxHeight, pb.Location.Y + pb.Image.Height);
-            }
-
-            _bigSize = new Size(maxWidth, maxHeight);
+            var edgeSize = GetEdgeSize(_list);
             var isPhone = chkBoxPhone.Checked;
-            var sassStr = "@mixin " + txtName.Text + "{background:url(" + txtDir.Text + "/" + txtName.Text + "." + GetImgExt() + ") no-repeat;" + (isPhone ? "background-size:" + _bigSize.Width / 2 + "px " + _bigSize.Height / 2 + "px" : "") + " }" + Environment.NewLine;
-            var cssStr = "." + txtName.Text + "{background:url(" + txtDir.Text + "/" + txtName.Text + "." + GetImgExt() + ")  no-repeat;" + (isPhone ? "background-size:" + _bigSize.Width / 2 + "px " + _bigSize.Height / 2 + "px" : "") + "}" + Environment.NewLine;
+            var tmpStr = "{0}"+txtName.Text + "[background:url(" + txtDir.Text + "/" + txtName.Text + "." + GetImgExt() + ") no-repeat {1};]" + Environment.NewLine;
+
+            var sassStr = string.Empty;
+            var cssStr = string.Empty;
+
+            if (chkBoxPhone.Checked)
+            {
+                chkBoxPhone_CheckedChanged(null, EventArgs.Empty);
+                sassStr = String.Format(tmpStr, "@mixin ", ";background-size:$_" + (edgeSize.MaxWidth - edgeSize.MinWidth) + " $_" + (edgeSize.MaxHeight - edgeSize.MinHeight)).Replace("[", "{").Replace("]", "}");
+                cssStr = String.Format(tmpStr, ".", ";background-size:@_" + (edgeSize.MaxWidth - edgeSize.MinWidth) + " $_" + (edgeSize.MaxHeight - edgeSize.MinHeight)).Replace("[", "{").Replace("]", "}");
+            }
+            else {
+                sassStr = String.Format(tmpStr, "@mixin ","").Replace("[", "{").Replace("]", "}");
+                cssStr = String.Format(tmpStr, ".","").Replace("[", "{").Replace("]", "}");
+            }
+            
             foreach (PictureBox pb in panelImages.Controls)
             {
-                sassStr += GetSassCss(pb.Image, pb.Left - minWidth, pb.Top-minHeight);
-                cssStr += GetCss(pb.Image, pb.Left - minWidth, pb.Top - minHeight);
+                sassStr += GetSassCss(pb.Image, pb.Left - edgeSize.MinWidth, pb.Top - edgeSize.MinHeight, true);
+                cssStr += GetSassCss(pb.Image, pb.Left - edgeSize.MinWidth, pb.Top - edgeSize.MinHeight, false);
             }
             txtSass.Text = sassStr;
             txtCss.Text = cssStr;
@@ -602,44 +604,42 @@ namespace CssSprite
         /// <param name="left">左边距离</param>
         /// <param name="top">右边距离</param>
         /// <returns></returns>
-        string GetSassCss(Image img, int left, int top)
+        string GetSassCss(Image img, int left, int top,bool isSass)
         {
             ImageInfo imgInfo = (ImageInfo)img.Tag;
             var isPhone = chkBoxPhone.Checked;
+            var unit = "px";
+            var sassPrefix = string.Empty;
+            var lessPrefix = string.Empty;
             if (isPhone)
             {
-                left = left / 2;
-                top = top / 2;
+                unit = "";
+                lessPrefix  = "@_";
+                sassPrefix = "$_";
             }
-            var _left = left == 0 ? "0" : (0 - left).ToString() + "px";
-            var _top = top == 0 ? "0" : (0 - top).ToString() + "px";
-            var imgHeight = isPhone ? img.Height / 2 : img.Height;
-            var imgWidth = isPhone ? img.Width / 2 : img.Width;
-            return "@mixin " + GetCssName(imgInfo.Name) + "{height:" + imgHeight + "px;width:" + imgWidth + "px;" + "background-position: " + _left + " " + _top + ";}" + Environment.NewLine;
-        }
-
-
-        /// <summary>
-        /// 获取css代码
-        /// </summary>
-        /// <param name="img">图片</param>
-        /// <param name="left">左边距离</param>
-        /// <param name="top">右边距离</param>
-        /// <returns></returns>
-        string GetCss(Image img, int left, int top)
-        {
-            ImageInfo imgInfo = (ImageInfo)img.Tag;
-            var isPhone = chkBoxPhone.Checked;
-            if (isPhone)
+            var _left = string.Empty;
+            var _top = string.Empty;
+            
+            if (isSass || isPhone)
             {
-                left = left / 2;
-                top = top / 2;
+                _left = left == 0 ? "0" : "0 " + "-{2}" + left.ToString() + unit;
+                _top = top == 0 ? "0" : "0 " + "-{2}" + top.ToString() + unit;
             }
-            var _left = left == 0 ? "0" : (0 - left).ToString() + "px";
-            var _top = top == 0 ? "0" : (0 - top).ToString() + "px";
-            var imgHeight = isPhone ? img.Height / 2 : img.Height;
-            var imgWidth = isPhone ? img.Width / 2 : img.Width;
-            return "." + GetCssName(imgInfo.Name) + "{height:" + imgHeight + "px;width:" + imgWidth + "px;background-position:" + _left + " " + _top + ";}" + Environment.NewLine;
+            else {
+                _left = left == 0 ? "0" : (0 - left).ToString() + unit;
+                _top = top == 0 ? "0" : (0 - top).ToString() + unit;
+            }
+            var imgHeight = isPhone ? img.Height.ToString()  : img.Height.ToString()+unit;
+            var imgWidth = isPhone ? img.Width.ToString() : img.Width.ToString() + unit;
+            var str = "{0}" + GetCssName(imgInfo.Name) + "[height:{1}" + imgHeight  + ";width:{1}" + imgWidth  + ";" + "background-position:" + _left + " " + _top + ";]" + Environment.NewLine;
+            if (isSass)
+            {
+                return String.Format(str, "@mixin ", sassPrefix, sassPrefix).Replace("[", "{").Replace("]", "}");
+            }
+            else 
+            {
+                return String.Format(str, ".", lessPrefix, lessPrefix).Replace("[", "{").Replace("]", "}");
+            }
         }
 
         void SetBase64()
@@ -650,6 +650,17 @@ namespace CssSprite
             ImageInfo imageInfo;
             int height, width;
             var isPhone = chkBoxPhone.Checked;
+            var unit = "px";
+            var sassPrefix = string.Empty;
+            var lessPrefix = string.Empty;
+            if (isPhone)
+            {
+                unit = "rem";
+                lessPrefix = "@_";
+                sassPrefix = "$_";
+            }
+            var _height = string.Empty;
+            var _width = string.Empty;
             foreach (PictureBox pb in panelImages.Controls)
             {
                 Bitmap bmp = new Bitmap(pb.Image, pb.Image.Width, pb.Image.Height);
@@ -679,14 +690,16 @@ namespace CssSprite
                 memStream.Read(arr, 0, (int)memStream.Length);
                 memStream.Close();
                 height = pb.Image.Height;
-                height = isPhone ? height / 2 : height;
+                //height = isPhone ? height / 2 : height;
                 width = pb.Image.Width;
-                width = isPhone ? width / 2 : width;
+                //width = isPhone ? width / 2 : width;
+                _height = height == 0 ? "0" : "{0}" + height.ToString() + unit;
+                _width = width == 0 ? "0" : "{0}" + width.ToString() + unit;
                 base64Sass += "@mixin ";
                 base64Css += ".";
-                var code = GetCssName(imageInfo.Name) + "{height:" + height + "px;width:" + width + "px;background:url(data:image/png;base64," + Convert.ToBase64String(arr) + ") no-repeat}" + Environment.NewLine;
-                base64Sass += code;
-                base64Css += code;
+                var code = GetCssName(imageInfo.Name) + "[height:" + _height + ";width:" + _width + ";background:url(data:image/png;base64," + Convert.ToBase64String(arr) + ") no-repeat]" + Environment.NewLine;
+                base64Sass += String.Format(code, sassPrefix).Replace("[", "{").Replace("]", "}");
+                base64Css += String.Format(code, lessPrefix).Replace("[", "{").Replace("]", "}");
             }
 
             txtBase64Sass.Text = base64Sass;
@@ -792,7 +805,6 @@ namespace CssSprite
         {
             if (e.Button == MouseButtons.Left)
             {
-                
                 _isDragged = true;
                 _dragStartLocation = new Point(e.X, e.Y);
             }
@@ -851,7 +863,7 @@ namespace CssSprite
                     maxHeight = Math.Max(maxHeight, pb.Location.Y + pb.Image.Height);
                 }
                 Size imgSize = new Size(maxWidth, maxHeight);
-                var codeMime = string.Empty;
+                //var codeMime = string.Empty;
                 using (Bitmap bigImg = new Bitmap(imgSize.Width-minWidth, imgSize.Height-minHeight, PixelFormat.Format32bppArgb))
                 {
                     string imgType = GetImgExt();
@@ -860,19 +872,12 @@ namespace CssSprite
                     {
                         case "jpeg":
                             format = ImageFormat.Jpeg;
-                            codeMime = "image/jpeg";
                             break;
                         case "jpg":
                             format = ImageFormat.Jpeg;
-                            codeMime = "image/jpeg";
                             break;
                         case "png":
                             format = ImageFormat.Png;
-                            codeMime = "image/png";
-                            break;
-                        case "gif":
-                            format = ImageFormat.Gif;
-                            codeMime = "image/gif";
                             break;
                         default:
                             break;
@@ -893,7 +898,13 @@ namespace CssSprite
                         
                         SetCssText();
                         SetBase64();
-                        var sprite = new SpriteFile() { CssFileName = txtDir.Text, ImageName = txtName.Text, SpriteList = new List<Sprite>(), IsPhone = chkBoxPhone.Checked };                        
+                        var sprite = new SpriteFile() { 
+                            CssFileName = txtDir.Text,
+                            ImageName = txtName.Text,
+                            SpriteList = new List<Sprite>(), 
+                            IsPhone = chkBoxPhone.Checked,
+                            SpriteImgFileType = comboBoxImgType.Text
+                        };                        
                         try
                         {
                             foreach (PictureBox pb in panelImages.Controls)
@@ -930,18 +941,6 @@ namespace CssSprite
             }
         }
 
-
-        //protected override bool IsInputChar(char charCode)
-        //{
-            //if (charCode == (char)Keys.Left || charCode == (char)Keys.Right || charCode == (char)Keys.Up || charCode == (char)Keys.Down)
-            //{
-            //    return true;
-            //}
-
-            //return base.IsInputChar(charCode);
-        //}
-
-        
 
         public bool IsImgExists(string fileName)
         {
@@ -989,9 +988,115 @@ namespace CssSprite
             SetCssText();
         }
 
+        List<PictureBox> _list ;
         private void chkBoxPhone_CheckedChanged(object sender, EventArgs e)
         {
-            SetCssText();
+            if (chkBoxPhone.Checked)
+            {
+                panelPhone.Visible = true;
+                _list = new List<PictureBox>();
+                foreach (PictureBox pb in panelImages.Controls)
+                {
+                    _list.Add(pb);
+                }
+                //按照Y轴排序
+                for (int i = 0; i < _list.Count; i++)
+                {
+                    for (int j = 0; j < _list.Count; j++)
+                    {
+                        if (_list[i].Location.Y < _list[j].Location.Y)
+                        {
+                            var temp = _list[i];
+                            _list[i] = _list[j];
+                            _list[j] = temp;
+                        }
+                    }
+                }
+                var left = 0;
+                var preY = 0;
+                var edgeSize = GetEdgeSize(_list);
+                for (var i = 0; i < _list.Count; i++) {
+                    var item=_list[i];
+                    var preItem=i>0?_list[i-1]:null;
+                    if (edgeSize.MinHeight != item.Location.Y)
+                    {
+                        if (preY == 0) {
+                            preY = preItem.Location.Y;
+                        }
+                        if (preY + preItem.Height - item.Location.Y == 2)
+                        {
+                            preY = item.Location.Y;
+                            var _left = item.Location.Y + left;
+                            item.Location = new Point(item.Location.X, _left);
+                        }
+                    }
+                    left++;
+                }
+                //按照X排序
+                for (int i = 0; i < _list.Count; i++)
+                {
+                    for (int j = 0; j < _list.Count; j++)
+                    {
+                        if (_list[i].Location.X < _list[j].Location.X)
+                        {
+                            var temp = _list[i];
+                            _list[i] = _list[j];
+                            _list[j] = temp;
+                        }
+                    }
+                }
+                var top = 0;
+                var preX = 0;
+                for (var i = 0; i < _list.Count; i++)
+                {
+                    var item = _list[i];
+                    var preItem = i > 0 ? _list[i - 1] : null;
+                    if (edgeSize.MinWidth != item.Location.X)
+                    {
+                        if (preX == 0)
+                        {
+                            preX = preItem.Location.X;
+                        }
+                        if (preX + preItem.Width - item.Location.X == 2)
+                        {
+                            preX = item.Location.X;
+                            var _top = item.Location.X + top;
+                            item.Location = new Point(_top, item.Location.Y);
+                        }
+                    }
+                    top++;
+                }
+            }
+            else
+            {
+                panelPhone.Visible = false;
+            }
+            if (sender != null) {
+                SetCssText();
+                SetBase64();
+            }
+        }
+
+        private void SetMargin(PictureBox pictureBox)
+        {
+            var locationPiont = new Point(pictureBox.Location.X, pictureBox.Location.Y);
+            foreach (PictureBox pb in _list)
+            {                if (pictureBox.Location.X - (pb.Location.X + pb.Width) == -2 && pictureBox.Location.Y == pb.Location.Y)  
+                {
+                    
+                    if (locationPiont.X > 0)
+                    {
+                        locationPiont.X++;
+                    }
+                }
+                if (pictureBox.Location.Y- (pb.Location.Y + pb.Height) == -2 && pictureBox.Location.X == pb.Location.X) {
+                    if (locationPiont.Y > 0)
+                    {
+                        locationPiont.Y++;
+                    }
+                } 
+            }
+            pictureBox.Location = locationPiont;
         }
 
         private void btn_Click(object sender, EventArgs e)
@@ -1018,6 +1123,21 @@ namespace CssSprite
         private void comboBoxImgType_SelectedIndexChanged(object sender, EventArgs e)
         {
             SetCssText();
+        }
+
+        private void linkLabelHelp_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Process.Start("http://www.cnblogs.com/wang4517/archive/2015/05/19/4514862.html");
+        }
+
+        private void linkLabelSass_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Process.Start("https://csssprite.herokuapp.com/sassVar");
+        }
+
+        private void linkLabelLess_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Process.Start("https://csssprite.herokuapp.com/lessVar");
         }
     }
 }

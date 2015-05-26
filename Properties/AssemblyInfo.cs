@@ -30,4 +30,4 @@ using System.Runtime.InteropServices;
 //      修订号
 //
 [assembly: AssemblyVersion("0.1.0.0")]
-[assembly: AssemblyFileVersion("4.0.0.0")]
+[assembly: AssemblyFileVersion("4.3.0.0")]

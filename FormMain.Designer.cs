@@ -62,6 +62,11 @@
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panelImages = new System.Windows.Forms.Panel();
+            this.panelPhone = new System.Windows.Forms.Panel();
+            this.linkLabelHelp = new System.Windows.Forms.LinkLabel();
+            this.label3 = new System.Windows.Forms.Label();
+            this.linkLabelSass = new System.Windows.Forms.LinkLabel();
+            this.linkLabelLess = new System.Windows.Forms.LinkLabel();
             this.panelTop.SuspendLayout();
             this.panelBottom.SuspendLayout();
             this.tabControl.SuspendLayout();
@@ -71,6 +76,7 @@
             this.tabPage4.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
+            this.panelPhone.SuspendLayout();
             this.SuspendLayout();
             // 
             // openFileDialog
@@ -86,18 +92,17 @@
             "Png",
             "Jpg",
             "Jpeg"});
-            this.comboBoxImgType.Location = new System.Drawing.Point(272, 60);
+            this.comboBoxImgType.Location = new System.Drawing.Point(689, 64);
             this.comboBoxImgType.Name = "comboBoxImgType";
             this.comboBoxImgType.Size = new System.Drawing.Size(121, 20);
             this.comboBoxImgType.TabIndex = 7;
-            this.comboBoxImgType.TabStop = false;
             this.comboBoxImgType.Text = "Png";
             this.comboBoxImgType.SelectedIndexChanged += new System.EventHandler(this.comboBoxImgType_SelectedIndexChanged);
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(165, 64);
+            this.label1.Location = new System.Drawing.Point(583, 69);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(101, 12);
             this.label1.TabIndex = 3;
@@ -114,7 +119,7 @@
             this.txtSass.Name = "txtSass";
             this.txtSass.ReadOnly = true;
             this.txtSass.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtSass.Size = new System.Drawing.Size(979, 105);
+            this.txtSass.Size = new System.Drawing.Size(979, 101);
             this.txtSass.TabIndex = 11;
             this.txtSass.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSass_KeyDown);
             // 
@@ -171,14 +176,14 @@
             this.txtCss.Name = "txtCss";
             this.txtCss.ReadOnly = true;
             this.txtCss.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtCss.Size = new System.Drawing.Size(979, 105);
+            this.txtCss.Size = new System.Drawing.Size(979, 101);
             this.txtCss.TabIndex = 19;
             this.txtCss.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtCss_KeyDown);
             // 
             // chkBoxPhone
             // 
             this.chkBoxPhone.AutoSize = true;
-            this.chkBoxPhone.Location = new System.Drawing.Point(6, 60);
+            this.chkBoxPhone.Location = new System.Drawing.Point(6, 68);
             this.chkBoxPhone.Name = "chkBoxPhone";
             this.chkBoxPhone.Size = new System.Drawing.Size(96, 16);
             this.chkBoxPhone.TabIndex = 20;
@@ -338,6 +343,7 @@
             // 
             // panelBottom
             // 
+            this.panelBottom.Controls.Add(this.panelPhone);
             this.panelBottom.Controls.Add(this.tabControl);
             this.panelBottom.Controls.Add(this.txtDir);
             this.panelBottom.Controls.Add(this.chkBoxPhone);
@@ -347,9 +353,9 @@
             this.panelBottom.Controls.Add(this.label5);
             this.panelBottom.Controls.Add(this.label2);
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelBottom.Location = new System.Drawing.Point(3, 320);
+            this.panelBottom.Location = new System.Drawing.Point(3, 311);
             this.panelBottom.Name = "panelBottom";
-            this.panelBottom.Size = new System.Drawing.Size(1002, 222);
+            this.panelBottom.Size = new System.Drawing.Size(1002, 231);
             this.panelBottom.TabIndex = 0;
             // 
             // tabControl
@@ -358,10 +364,10 @@
             this.tabControl.Controls.Add(this.tabPage2);
             this.tabControl.Controls.Add(this.tabPage3);
             this.tabControl.Controls.Add(this.tabPage4);
-            this.tabControl.Location = new System.Drawing.Point(6, 82);
+            this.tabControl.Location = new System.Drawing.Point(6, 96);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(993, 137);
+            this.tabControl.Size = new System.Drawing.Size(993, 133);
             this.tabControl.TabIndex = 21;
             // 
             // tabPage1
@@ -370,7 +376,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(985, 111);
+            this.tabPage1.Size = new System.Drawing.Size(985, 107);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "sass代码";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -381,9 +387,9 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(985, 111);
+            this.tabPage2.Size = new System.Drawing.Size(985, 107);
             this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "css代码";
+            this.tabPage2.Text = "css/less代码";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
             // tabPage3
@@ -392,7 +398,7 @@
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(985, 111);
+            this.tabPage3.Size = new System.Drawing.Size(985, 107);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "sass Base64代码";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -408,7 +414,7 @@
             this.txtBase64Sass.Name = "txtBase64Sass";
             this.txtBase64Sass.ReadOnly = true;
             this.txtBase64Sass.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtBase64Sass.Size = new System.Drawing.Size(979, 105);
+            this.txtBase64Sass.Size = new System.Drawing.Size(979, 101);
             this.txtBase64Sass.TabIndex = 12;
             this.txtBase64Sass.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtBase64Sass_KeyDown);
             // 
@@ -418,7 +424,7 @@
             this.tabPage4.Location = new System.Drawing.Point(4, 22);
             this.tabPage4.Name = "tabPage4";
             this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage4.Size = new System.Drawing.Size(985, 111);
+            this.tabPage4.Size = new System.Drawing.Size(985, 107);
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "css Base64代码";
             this.tabPage4.UseVisualStyleBackColor = true;
@@ -434,7 +440,7 @@
             this.txtBase64Css.Name = "txtBase64Css";
             this.txtBase64Css.ReadOnly = true;
             this.txtBase64Css.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtBase64Css.Size = new System.Drawing.Size(979, 105);
+            this.txtBase64Css.Size = new System.Drawing.Size(979, 101);
             this.txtBase64Css.TabIndex = 12;
             this.txtBase64Css.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtBase64Css_KeyDown);
             // 
@@ -451,7 +457,7 @@
             this.tableLayoutPanel1.RowCount = 3;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 60F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 228F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 237F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(1008, 545);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
@@ -462,7 +468,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(3, 63);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1002, 251);
+            this.panel1.Size = new System.Drawing.Size(1002, 242);
             this.panel1.TabIndex = 0;
             // 
             // panelImages
@@ -473,8 +479,62 @@
             this.panelImages.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelImages.Location = new System.Drawing.Point(0, 0);
             this.panelImages.Name = "panelImages";
-            this.panelImages.Size = new System.Drawing.Size(1002, 251);
+            this.panelImages.Size = new System.Drawing.Size(1002, 242);
             this.panelImages.TabIndex = 0;
+            // 
+            // panelPhone
+            // 
+            this.panelPhone.Controls.Add(this.label3);
+            this.panelPhone.Controls.Add(this.linkLabelLess);
+            this.panelPhone.Controls.Add(this.linkLabelSass);
+            this.panelPhone.Controls.Add(this.linkLabelHelp);
+            this.panelPhone.Location = new System.Drawing.Point(106, 60);
+            this.panelPhone.Name = "panelPhone";
+            this.panelPhone.Size = new System.Drawing.Size(435, 28);
+            this.panelPhone.TabIndex = 22;
+            this.panelPhone.Visible = false;
+            // 
+            // linkLabelHelp
+            // 
+            this.linkLabelHelp.AutoSize = true;
+            this.linkLabelHelp.Location = new System.Drawing.Point(50, 9);
+            this.linkLabelHelp.Name = "linkLabelHelp";
+            this.linkLabelHelp.Size = new System.Drawing.Size(143, 12);
+            this.linkLabelHelp.TabIndex = 0;
+            this.linkLabelHelp.TabStop = true;
+            this.linkLabelHelp.Text = "手机端页面rem自适应脚本";
+            this.linkLabelHelp.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelHelp_LinkClicked);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(2, 9);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(41, 12);
+            this.label3.TabIndex = 1;
+            this.label3.Text = "帮助：";
+            // 
+            // linkLabelSass
+            // 
+            this.linkLabelSass.AutoSize = true;
+            this.linkLabelSass.Location = new System.Drawing.Point(208, 9);
+            this.linkLabelSass.Name = "linkLabelSass";
+            this.linkLabelSass.Size = new System.Drawing.Size(77, 12);
+            this.linkLabelSass.TabIndex = 0;
+            this.linkLabelSass.TabStop = true;
+            this.linkLabelSass.Text = "Sass变量合集";
+            this.linkLabelSass.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelSass_LinkClicked);
+            // 
+            // linkLabelLess
+            // 
+            this.linkLabelLess.AutoSize = true;
+            this.linkLabelLess.Location = new System.Drawing.Point(303, 9);
+            this.linkLabelLess.Name = "linkLabelLess";
+            this.linkLabelLess.Size = new System.Drawing.Size(77, 12);
+            this.linkLabelLess.TabIndex = 0;
+            this.linkLabelLess.TabStop = true;
+            this.linkLabelLess.Text = "Less变量合集";
+            this.linkLabelLess.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelLess_LinkClicked);
             // 
             // FormMain
             // 
@@ -500,6 +560,8 @@
             this.tabPage4.PerformLayout();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
+            this.panelPhone.ResumeLayout(false);
+            this.panelPhone.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -539,6 +601,11 @@
         private System.Windows.Forms.TabPage tabPage4;
         private System.Windows.Forms.TextBox txtBase64Sass;
         private System.Windows.Forms.TextBox txtBase64Css;
+        private System.Windows.Forms.Panel panelPhone;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.LinkLabel linkLabelHelp;
+        private System.Windows.Forms.LinkLabel linkLabelLess;
+        private System.Windows.Forms.LinkLabel linkLabelSass;
     }
 }
 
